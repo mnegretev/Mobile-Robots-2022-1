@@ -22,6 +22,7 @@ def callback_scan(msg):
     # Do something to detect if there is an obstacle in front of the robot.
     # Set the 'obstacle_detected' variable with True or False, accordingly.
     #
+    obstacle_detected = msg.ranges[len(msg.ranges)//2] < 1.0
     return
 
 def main():
