@@ -28,6 +28,14 @@ def get_inflated_map(static_map, inflation_cells):
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
+    for i in range(height):
+	    for j in range(width):
+            	if static_map[i,j] ==100:
+                	for k1 in range(-inflation_cells, inflation_cells):
+                    		for k2 in range(-inflation_cells,inflation_cells):
+                        		inflated [i+k1,j+k2] = 100
+
+	
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -55,7 +63,15 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    
+    for i in range(height):
+       for j in range(width):
+           if static_map[i,j] ==100:
+               for k1 in range(-cost_radius,cost_radius):
+                   for k2 in range(-cost_radius,cost_radius):
+                       c = cost_radius - max(abs(k1), abs(k2))+1
+                       m = cost_map[i+k1, j+k2]
+                       cost_map[i+k1,j+k2] = max(c,m)
+
     return cost_map
 
 def callback_inflated_map(req):
