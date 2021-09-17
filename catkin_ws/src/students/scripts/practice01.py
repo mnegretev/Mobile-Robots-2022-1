@@ -53,7 +53,7 @@ def get_cost_map(static_map, cost_radius):
     		if static_map[i,j]==100:
     			for k1 in range(-cost_radius,cost_radius,1):
     				for k2 in range(-cost_radius,cost_radius,1):
-    					C=cost_radius-max(abs(k1),abs(2))+1
+    					C=cost_radius-max(abs(k1),abs(k2))+1
     					M=cost_map[i+k1][j+k2]
     					if C < M:
     						cost_map[i+k1][j+k2]=C
