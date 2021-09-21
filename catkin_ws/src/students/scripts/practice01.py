@@ -15,7 +15,7 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "FULL_NAME"
+NAME = "HERNANDEZ_FONTES_ALDO"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
@@ -28,6 +28,12 @@ def get_inflated_map(static_map, inflation_cells):
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
+    for i in range(0, height):
+	for j in range(0, width):
+	    if (static_map[i,j] == 100):
+		for k in range(i - inflation_cells, i + inflation_cells + 1):
+			for l in range(j - inflation_cells, j + inflation_cells + 1):
+				inflated[k,l] = static_map[i,j]
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -55,7 +61,14 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    
+    for i in range(0, height):
+        for j in range(0,width):
+	    if (static_map[i,j] == 100):
+		for k in range(-cost_radius, cost_radius + 1):
+		    for l in range(-cost_radius, cost_radius + 1):
+			X = cost_radius - max(abs(k),abs(l))
+			Y = cost_map[i + k, j + l]
+			cost_map[i + k, j + l] = max(X, Y)
     return cost_map
 
 def callback_inflated_map(req):
@@ -105,4 +118,3 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
-    
