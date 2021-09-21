@@ -35,7 +35,6 @@ def main():
     obstaculo = False
     velocidad = Twist()
     while not rospy.is_shutdown():
-        
         velocidad.linear.x = 0 if obstaculo else 0.5
         pub_cmd_vel.publish(velocidad)
         loop.sleep()
