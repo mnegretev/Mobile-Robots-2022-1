@@ -13,7 +13,7 @@ import rospy
 from sensor_msgs.msg   import LaserScan
 from geometry_msgs.msg import Twist
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Garcia Onate Miguel Angel"
 
 def callback_scan(msg):
     global obstaculo
@@ -21,7 +21,7 @@ def callback_scan(msg):
     # TODO:
     # Do something to detect if there is an obstacle in front of the robot.
     # Set the 'obstacle_detected' variable with True or False, accordingly.
-    obstaculo = msg.ranges[len(msg.ranges)//2] < 1.0
+    obstaculo = msg.ranges[len(msg.ranges)//2] < 2.0
     return
 
 def main():
@@ -33,10 +33,11 @@ def main():
     
     global obstaculo
     obstaculo = False
-    velocidad = Twist()
+    msg = Twist()
     while not rospy.is_shutdown():
-        velocidad.linear.x = 0 if obstaculo else 0.5
-        pub_cmd_vel.publish(velocidad)
+        msg.linear.x = 0.5 if not obstaculo else 0.0
+        print(obstaculo)
+        pub_cmd_vel.publish(msg)
         loop.sleep()
 
 
