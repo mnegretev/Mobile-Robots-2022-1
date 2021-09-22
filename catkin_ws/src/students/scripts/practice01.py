@@ -15,7 +15,7 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "FULL_NAME"
+NAME = "MANZO SOTO JORGE LUIS"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
@@ -28,6 +28,24 @@ def get_inflated_map(static_map, inflation_cells):
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
+
+    for i in range(height):
+    #Sabemos que nuestras variable "height" representa el alto de nuestro mapa, por lo que
+    #en esta parte lo que hacemos es un recorrido desde el punto 0, hasta el punto final de
+    #nuestro mapa.
+	for j in range(width):
+    #Por otro lado, la variable "width" representa el ancho de nuestro mapa, por lo tanto,
+    #en esta parte de nuestro codigo, estamos haciendo un recorrido por todo el ancho del mapa.
+		if static_map[i,j]==100:
+    #En esta condicacional, estamos analizando si nuestra celda se encuentra o no ocupada, el 
+    #valor 100, indica que dicha celda esta ocupada, en el caso contrario existiria un valor 
+    #diferente, dependiendo del acercamiento que tenga con un objeto.
+			for k1 in range(i-inflation_cells,i+inflation_cells + 1): 
+    #Estos dos for, estan definiendo el area que estara ocupada, debido a la inflacion del mapa.
+				for k2 in range(j-inflation_cells,j+inflation_cells + 1):
+					inflated[k1,k2]=static_map[i,j]
+    #Por ultimo, nuestra variable "inflated" va a regresar las celdas que estaran ocupadas debido
+    #a las condicionales y a la inflacion que dichas condicionales ejecutan. 
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -55,7 +73,25 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    
+    for i in range(height):
+    #AL igual que en los comandos anteriores, este for realiza un recorrido desde el punto
+    #cero hasta la altura maxima de nuestro mapa.
+	for j in range(width):
+    #Al igual que en los comandos anteriores, este for realiza un recorrido desde el punto
+    #cero hasta el ancho maxima de nuestro mapa.
+		if static_map[i,j]==100:
+    #Al igual que en los comandos anteriores, esta condicional analiza si las celdas estan o no
+    #ocupadas, en el caso de estarlo mostraran un valor de 100.
+			for k1 in range(-cost_radius, cost_radius + 1):
+				for k2 in range(-cost_radius, cost_radius + 1):
+					costo= cost_radius-max(abs(k1),abs(k2))
+					mapafinal= cost_map[i+k1, j+k2]
+					cost_map[i + k1, j + k2]=max(costo,mapafinal)
+    #A diferencia del caso anterior, aqui se le van a agregar valores a las celdas que se encuentran 
+    #al rededor de la zona de inflacion, sin embargo, estos valores seran distintos, no significaran
+    #que son celdas ocupadas, si no, que mostraran que tan cerca se encuentra el robot de las celdas 
+    #ocupadas.
+    print cost_map
     return cost_map
 
 def callback_inflated_map(req):
