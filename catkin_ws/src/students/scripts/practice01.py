@@ -15,19 +15,20 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "FULL_NAME"
+NAME = "CEBALLOS EQUIHUA CONAN NATHANIEL"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
     inflated = numpy.copy(static_map)
     [height, width] = static_map.shape
-    #
-    # TODO:
-    # Write the code necessary to inflate the obstacles in the map a radius
-    # given by 'inflation_cells' (expressed in number of cells)
-    # Map is given in 'static_map' as a bidimensional numpy array.
-    # Consider as occupied cells all cells with an occupation value greater than 50
-    #
+
+    for i in range(0, height):
+        for j in range(0, width):
+            if static_map[i, j] == 100:
+                for k1 in range(-inflation_cells, inflation_cells+1):
+                    for k2 in range(-inflation_cells, inflation_cells+1):
+                        inflated[i+k1, j+k2] = 100
+    
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -36,26 +37,16 @@ def get_cost_map(static_map, cost_radius):
     print "Calculating cost map with " +str(cost_radius) + " cells"
     cost_map = numpy.copy(static_map)
     [height, width] = static_map.shape
-    #
-    # TODO:
-    # Write the code necessary to calculate a cost map for the given map.
-    # To calculate cost, consider as example the following map:    
-    # [[ 0 0 0 0 0 0]
-    #  [ 0 X 0 0 0 0]
-    #  [ 0 X X 0 0 0]
-    #  [ 0 X X 0 0 0]
-    #  [ 0 X 0 0 0 0]
-    #  [ 0 0 0 X 0 0]]
-    # Where occupied cells 'X' have a value of 100 and free cells have a value of 0.
-    # Cost is an integer indicating how near cells and obstacles are:
-    # [[ 3 3 3 2 2 1]
-    #  [ 3 X 3 3 2 1]
-    #  [ 3 X X 3 2 1]
-    #  [ 3 X X 3 2 2]
-    #  [ 3 X 3 3 3 2]
-    #  [ 3 3 3 X 3 2]]
-    # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    
+
+    for i in range(0, height):
+        for j in range(0, width):
+            if static_map[i, j] == 100:
+                for k1 in range(-cost_radius, cost_radius+1):
+                    for k2 in range(-cost_radius, cost_radius+1):
+                        new_cost = cost_radius - max(abs(k1), abs(k2)) + 1
+                        old_cost = cost_map[i+k1, j+k2]
+                        cost_map[i+k1, j+k2] = max(new_cost, old_cost)
+
     return cost_map
 
 def callback_inflated_map(req):
