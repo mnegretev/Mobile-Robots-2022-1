@@ -11,9 +11,9 @@
 
 import rospy
 from sensor_msgs.msg   import LaserScan
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist #Velocidad en el espacio
 
-NAME = "Juarez Castillo Arturo"
+NAME = "Juarez Castillo"
 
 def callback_scan(msg):
     global obstacle_detected
@@ -27,7 +27,7 @@ def callback_scan(msg):
 
 def main():
     print("PRACTICE 00 - " + NAME)
-    rospy.init_node("practice00")
+    rospy.init_node("practice00") #Establece comunicacion con el nodo master
     rospy.Subscriber("/scan", LaserScan, callback_scan)
     pub_cmd_vel = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
     loop = rospy.Rate(10)
