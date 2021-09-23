@@ -36,10 +36,10 @@ def get_inflated_map(static_map, inflation_cells):
     #inflated = numpy.copy(static_map)
     for i in range(0, height):
     	for j in range(0, width):
-    		if inflated[i,j] == 99:
-        		for k1 in range(-inflation_cells, inflation_cells+1):
-        			for k2 in range(-inflation_cells, inflation_cells+1):
-        				inflated[i+k1, j+k2] = 100
+    		if static_map [i,j] > 0:
+        		for k1 in range(i-inflation_cells, i+inflation_cells+1):
+        			for k2 in range(j-inflation_cells, j+inflation_cells+1):
+        				inflated[k1, k2] = static_map[i,j]
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -71,12 +71,11 @@ def get_cost_map(static_map, cost_radius):
 #    cost_map = numpy.copy(static_map)
     for i in range(0,height):
     	for j in range(0,width):
-		if cost_map[i,j] == 9:
-		   for k1 in range(-cost_radius, cost_radius):
-		   	for k2 in range(-cost_radius, cost_radius):
+		if static_map[i,j] > 0:
+		   for k1 in range(-cost_radius, cost_radius+1):
+		   	for k2 in range(-cost_radius, cost_radius+1):
 				c = cost_radius - max(abs(k1), abs(k2)) + 1
-				m = inflated [i+k1, j+k2]
-	           		cost_map[i+k1, j+k2] = max(c,m)
+	           		cost_map[i+k1, j+k2] = max(c,cost_map[i+k1, j+k2])
 
     return cost_map
 
