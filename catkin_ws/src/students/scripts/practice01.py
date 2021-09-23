@@ -15,7 +15,7 @@ de  nav_msgs . srv  importar  GetMap
 de  nav_msgs . srv  importar  GetMapResponse
 de  nav_msgs . srv  importar  GetMapRequest
 
-NOMBRE  =  "INFANTE GONZALEZ HECTOR SAID"
+NOMBRE  =  "INFANTE_GONZALEZ_HECTOR_SAID"
 
 def  get_inflated_map ( static_map , inflation_cells ):
     print ( "Inflar mapa por"  +  str ( inflacion_celdas ) +  "celdas" )
@@ -120,10 +120,8 @@ def  principal ():
             pub_map . publicar ( callback_inflated_map ( GetMapRequest ()). map )
         bucle . dormir ()
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     try:
         main()
     except rospy.ROSInterruptException:
         pass
-    
-    
