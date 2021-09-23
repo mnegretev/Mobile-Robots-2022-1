@@ -31,8 +31,8 @@ def get_inflated_map(static_map, inflation_cells):
     for i in range(height):
         for j in range(width):
             if static_map[i,j]==100 :
-                for k1 in [-inflation_cells, inflation_cells]:
-                    for k2 in [-inflation_cells, inflation_cells]:
+                for k1 in range(-inflation_cells,  inflation_cells+1):
+                    for k2 in range(-inflation_cells, inflation_cells+1):
                         inflated[i+k1, j+k2]=100
 
     #
