@@ -15,7 +15,7 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "FULL_NAME"
+NAME = "Fragoso Luna Abneriz Sarai"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
@@ -24,11 +24,19 @@ def get_inflated_map(static_map, inflation_cells):
     #
     # TODO:
     # Write the code necessary to inflate the obstacles in the map a radius
-    # given by 'inflation_cells' (expressed in number of cells)
+    # given by 'inflation_cells'
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
+    for i in range(height):
+    	for j in range(width):# vamos recorriendo el mapa casilla por casilla
+    		if static_map[i, j] > 50:#compara si una celda esta vacia u ocupada
+    			for k1 in range(i-inflation_cells, i+inflation_cells+1):#nos va a inflar la celda respecto al radio del robot
+    				for k2 in range(j-inflation_cells, j+inflation_cells+1):
+    					inflated[k1,k2]=static_map[i,j]#rellenamos 
     return inflated
+
+##MAPA DE COSTOS
 
 def get_cost_map(static_map, cost_radius):
     if cost_radius > 20:
@@ -55,8 +63,16 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
+   for i in range(0,width-1):
+		for j in range(0,height-1):#vamos pasando de celda en celda
+			if static_map[j,i] > 50:#comprobamos si la celda esta ocupada o vacia
+				for k1 in range(-cost_radius, +cost_radius):#vamos checando la proximidad
+					for k2 in range(-cost_radius, +cost_radius):
+						c = cost_radius + 1 - max(abs(k2),abs(k1))
+						cost_map[j+k2, i+k1] = max(c,cost_map[j+k2, i+k1])
     
     return cost_map
+
 
 def callback_inflated_map(req):
     global inflated_map
