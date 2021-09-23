@@ -120,9 +120,10 @@ def  principal ():
             pub_map . publicar ( callback_inflated_map ( GetMapRequest ()). map )
         bucle . dormir ()
 
-if  __name__  ==  '__main__' :
-    prueba :
-        principal ()
-    excepto  rosado . ROSInterruptException :
-        aprobar
+if __name__ == '__main__':
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass
+    
     
