@@ -63,15 +63,14 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    width=+1
-    height=+1
-    for i in range(0,width):
-        for j in range(0,height):
+    for i in range(0,width-1):
+        for j in range(0,height-1):
             if static_map[j,i] > 50: #If the cell is occupied
                 for u in range(-cost_radius, +cost_radius):
                     for v in range(-cost_radius, +cost_radius):
                         c = cost_radius + 1 - max(abs(v),abs(u))
                         cost_map[j+v, i+u] = max(c,cost_map[j+v, i+u])
+    
     return cost_map
 
 def callback_inflated_map(req):
