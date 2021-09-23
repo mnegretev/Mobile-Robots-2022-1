@@ -36,10 +36,10 @@ def get_inflated_map(static_map, inflation_cells):
     #inflated = numpy.copy(static_map)
     for i in range(0, height):
     	for j in range(0, width):
-    		if inflated[i,j] == 99:
+    		if inflated[i,j] == 6:
         		for k1 in range(-inflation_cells, inflation_cells+1):
         			for k2 in range(-inflation_cells, inflation_cells+1):
-        				inflated[i+k1, j+k2] = 100
+        				inflated[i+k1, j+k2] = 6
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -47,7 +47,7 @@ def get_cost_map(static_map, cost_radius):
         cost_radius = 20
     print "Calculating cost map with " +str(cost_radius) + " cells"
     cost_map = numpy.copy(static_map)
-    [height, width] = static_map.shape
+em src/students/scripts/practice00.py    [height, width] = static_map.shape
     #
     # TODO:
     # Write the code necessary to calculate a cost map for the given map.
@@ -78,7 +78,7 @@ def get_cost_map(static_map, cost_radius):
 				m = inflated [i+k1, j+k2]
 	           		cost_map[i+k1, j+k2] = max(c,m)
 
-    return cost_map
+    return cost_mapem src/students/scripts/practice00.py
 
 def callback_inflated_map(req):
     global inflated_map
