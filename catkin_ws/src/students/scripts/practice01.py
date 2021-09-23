@@ -15,7 +15,7 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "FULL_NAME"
+NAME = "Jorge Francisco Ramirez Castanon"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
@@ -28,6 +28,34 @@ def get_inflated_map(static_map, inflation_cells):
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
+
+    #
+    #Antes que nada tenemos que leer el mapa completo y buscar las celdas que ya
+    #esten ocupadas. Dado que es un mapa con coordenadas bidimensionales,
+    #utilizaremos dos arreglos 'for' con las variables 'i', 'j' para recorrerlo.
+    #El rango de los arreglos 'for' estan limitados por el tamano y ancho del
+    #mapa, los cuales definimos con las variables 'height' y 'width'.
+    #
+    for i in range(height):
+        for j in range(width):
+
+    #
+    #Mientras recorremos el mapa, vamos leyendo el valor de las celdas para ver si
+    #estan ocupadas o no. Si es el primer caso, la celda tiene un valor igual a
+    #100. Por ello utilizamos el siguiente 'if'.
+    #
+            if static_map[i,j] == 100:
+
+    #
+    #Una vez que encontramos una celda ocupada, inflamos las celdas aledanas con
+    #la cantidad especificada en la variable 'inflated_cells'. Para esto utilizamos
+    #nuevamente un arreglo for para marcar las celdas infladas en nuestro mapa
+    #'inflated' con tal de no modificar el mapa original.
+    #
+                for k1 in range(i-inflation_cells,i+inflation_cells+1):
+                    for k2 in range(j-inflation_cells, j+inflation_cells+1):
+                        inflated[k1,k2] = static_map[i,j]
+
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -56,6 +84,29 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
     
+    #
+    #Para resolver esta parte, vamos a hacer lo mismo que en el primer ejercicio de esta 
+    #practica. Nuevamente recorremos el mapa completo con un arreglo for y buscamos celdas
+    #que esten ocupadas con un valor de 100. Cuando encontremos una tambien vamos a rellenar
+    #las celdas aledanas, solo que ahora con un valor numerico.
+    #
+
+    for i in range(height):
+        for j in range(width):
+            if static_map[i,j] == 100:
+                for k1 in range(-cost_radius, cost_radius+1):
+                    for k2 in range(-cost_radius,cost_radius+1):
+
+    #
+    #Ahora tenemos que agregar los valores numericos alrededor de las celdas ocupadas, en
+    #donde las celdas mas cercanas a la que esta ocupada tienen un valor mas grande, el cual
+    #decrece conforme se aleja de esta primera (con base en los parametros 'cost_radius'
+    #
+        
+                        cost = cost_radius - max(abs(k1), abs(k2))
+                        mapa_apoyo = cost_map[i+k1, j+k2]
+                        cost_map[i+k1, j+k2] = max(cost, mapa_apoyo)
+
     return cost_map
 
 def callback_inflated_map(req):
