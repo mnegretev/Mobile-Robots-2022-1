@@ -18,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "REZA CHAVARRIA"
 
 msg_path = Path()
 
@@ -31,8 +31,73 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     # indicating the indices (cell coordinates) of the path cells.
     # If path cannot be found, return an empty tuple []
     #
+    #COLA CON PRIORIRDAD
+    open_list=[]
+    g_values= numpy.full(grid_map.shape,float("inf"))
+    f_values= numpy.full(grid_map.shape,float("inf"))
+    #Nodo previo
+    previous= numpy.full((grid_map.shape[0],grid_map.shape[0],2),-1)
+    #listas abiertas y cerradas con binarios
+    in_closed_l=numpy.full(grid_map.shape,False)
+    in_open_l=numpy.full(grid_map.shape,False)
+    
+    #Valores de nodos adjacentes (forma 8)
+    adjacents   = [[1,0],[0,1],[-1,0],[0,-1], [1,1], [-1,1], [-1,-1],[1,-1]]
+    heapq.heappush(open_list,(0,[start_r,start_c]))
+    #Inicializacion de valores y revision de valores del nodo inicial
+    in_open_l[start_r,start_c]=True
+    g_values[start_r,start_c]=0
+    f_values[start_r,start_c]=0
+    [row,col]=[start_r,start_c]
+
+    while len(open_list)>0 and [row,col]!=[goal_r,goal_c]:
+      #Size del mapa
+      [row,col]=heapq.heappop(open_list)[1]
+      #Agregar a la lista cerrada
+      in_closed_l[row,col]=True
+      #Obtener los nodos adyacentes
+      adjacents_nodes = [[row+i, col+j] for [i,j] in adjacents]
+
+      for [r,c] in adjacents_nodes:
+        #Si los nodos adyacentes no valen 0 o ya estan en la lista cerrada
+        #Terminar la iteracion
+        if grid_map[r,c]!=0 or in_closed_l[r,c]:
+          continue
+
+        #Calculo de valor de G con los valores de costo y la distancia entre nodos
+        g=g_values[row,col]+ math.sqrt((row-r)**2+(col-c)**2)+cost_map[row,col]
+        #Distancia entre el nodo actual y el nodo de meta
+        h=math.sqrt((goal_r-r)**2 + (goal_c-c)**2)
+        #Valor de revision para ruta estrella
+        f=g+h
+        #Asignacion de valores en las tablas
+        if g <g_values[r,c]:
+          g_values[r,c]=g
+          f_values[r,c]=f
+          #Asignar nodo previo
+          previous[r,c]=[row,col]
+
+        #SI no esta en la lista abierta el nodo
+        if not in_open_l[r,c]:
+          #Agregar a la lista abierta
+          heapq.heappush(open_list,(f_values[r,c],[r,c]))
+          in_open_l[r,c]=True
+
+    #Si el valor no es igual al punto final
+    if [row,col]!= [goal_r,goal_c]:
+      print("Cannot calculate path")
+      return []
+    print("Path complete")
+
     path = []
+    #Agregar a la ruta los nodos previos
+    while [previous[row,col][0],previous[row,col][1]]!=[-1,-1]:
+      path.insert(0,[row,col])
+      #Obtener el renglon y columna del nodo previo
+      [row,col]=previous[row,col]
     return path
+
+
 
 def get_maps():
     print("Getting inflated and cost maps...")
