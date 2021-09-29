@@ -18,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Manzo_Soto_Jorge_Luis"
 
 msg_path = Path()
 
@@ -31,7 +31,53 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     # indicating the indices (cell coordinates) of the path cells.
     # If path cannot be found, return an empty tuple []
     #
+    open_list   = []
+    in_closed_l = numpy.full( grid_map.shape, False)
+    in_open_l   = numpy.full( grid_map.shape, False)
+    g_values    = numpy.full( grid_map.shape, float("inf"))
+    f_values    = numpy.full( grid_map.shape, float("inf"))
+    previous    = numpy.full((grid_map.shape[0], grid_map.shape[0], 2), -1)
+    adjacents   = [[1,0],[0,1],[-1,0],[0,-1], [1,1], [-1,1], [-1,-1],[1,-1]]
+    heapq.heappush(open_list, (0, [start_r, start_c]))
+    in_open_l[start_r, start_c] = True
+    g_values[start_r, start_c] = 0
+    f_values[start_r, start_c] = 0
+    [row, col] = [start_r, start_c]
+
+    while len(open_list) > 0 and [row, col] != [goal_r, goal_c]:
+        [row, col] = heapq.heappop(open_list)[1]
+        in_closed_l[row,col] = True
+        adjacents_nodes = [[row+i, col+j] for [i,j] in adjacents]
+        for [r,c] in adjacents_nodes:
+            if grid_map[r,c] != 0 or in_closed_l[r,c]:
+                continue
+            g = g_values[row, col] + math.sqrt((row-r)**2 + (col-c)**2) + cost_map[r,c]
+            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
+            f = g + h
+            if g < g_values[r,c]:
+                g_values[r,c] = g
+                f_values[r,c] = f
+                previous[r,c] = [row,col]
+            if not in_open_l[r,c]:
+                heapq.heappush(open_list, (f_values[r,c], [r,c]))
+                in_open_l[r,c] = True
+                
+    if [row,col] != [goal_r, goal_c]:
+        print("Cannot calculate path. :'(")
+        return []
+    print("Path calculated succesfully :D ")
     path = []
+    #PRACTICA 02 MODIFICACION 
+    #Ya que hemos comprobado si la ruta que el usuario ingresa existe o no vamos a analizar
+    #si el nodo en el que nos encontramos es nulo o no para eso tenemos lo siguiente 
+    while [previous[row,col][0],previous[row,col][1]]!=[-1,-1]:
+    #Colocamos la condicional de que si nuestro nodo meta es diferente de NULL realizamos lo siguiente
+    #En este caso utilizamos los valores[-1,-1] como sinonimo de nodo nulo
+      path.insert(0,[row,col])
+    #Indicamos que el inicio de nuestra ruta es el conjunto vacio en cuestion 
+      [row,col]=previous[row,col]
+    #En el caso de que nuestra condicional se cumpla indicamos que se va a agregar nuestro nodo meta 
+    # mas la ruta que ya llevaba
     return path
 
 def get_maps():
@@ -87,4 +133,6 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
+    
+
     
