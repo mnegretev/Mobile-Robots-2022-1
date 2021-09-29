@@ -68,9 +68,9 @@ def get_cost_map(static_map, cost_radius):
     for i in range(height):
             for j in range(width):
                 if static_map[i,j]==100 :
-                    for k1 in [-cost_radius, cost_radius]:
-                        for k2 in [-cost_radius, cost_radius]:
-                            c=cost_radius-max(abs(k1),abs(k2))+1
+                    for k1 in range(-cost_radius, cost_radius+1):
+                        for k2 in range(-cost_radius, cost_radius+1):
+                            c=cost_radius-max(k1,k2)+1
                             m=cost_map[i+k1,j+k2]
                             cost_map[i+k1,j+k2]=max(c,m)
 
