@@ -22,14 +22,13 @@ def get_inflated_map(static_map, inflation_cells):
     inflated = numpy.copy(static_map)
     [height, width] = static_map.shape
 
-    for i in range(0, height,1):
-	for j in range(0, width,1):
+    for i in range(height):
+	for j in range(width):
 		#print i,j
 		if static_map[i,j] == 100:
-			for K1 in range(i-inflation_cells,i+inflation_cells,1):
-				for K2 in range(j-inflation_cells,j+inflation_cells,1):
-					print K1,K2
-					inflated[K1,K2]=100
+			for K1 in range(-inflation_cells,inflation_cells+1):
+				for K2 in range(-inflation_cells,inflation_cells+1):
+					inflated[i+K1,j+K2]=100
    
 
     #
@@ -48,15 +47,15 @@ def get_cost_map(static_map, cost_radius):
     cost_map = numpy.copy(static_map)
     [height, width] = static_map.shape
 
-    for i in range(0, height,1):
-    	for j in range(0, width,1):
+    for i in range(height):
+    	for j in range(width):
     		if static_map[i,j]==100:
-    			for k1 in range(-cost_radius,cost_radius,1):
-    				for k2 in range(-cost_radius,cost_radius,1):
+    			for k1 in range(-cost_radius,cost_radius+1):
+    				for k2 in range(-cost_radius,cost_radius+1):
     					C=cost_radius-max(abs(k1),abs(k2))+1
     					M=cost_map[i+k1][j+k2]
-    					if C < M:
-    						cost_map[i+k1][j+k2]=C
+    					cost_map[i+k1][j+k2]= max(C,M)
+					#print cost_map[i+k1][j+k2]
 
     #
     # TODO:
@@ -77,7 +76,6 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    
     return cost_map
 
 def callback_inflated_map(req):
