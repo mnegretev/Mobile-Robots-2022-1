@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 #
 # AUTONOMOUS MOBILE ROBOTS - UNAM, FI, 2022-1
@@ -19,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "Fragoso Luna Abneriz Sarai"
+NAME = "CRUZ_TORRES"
 
 msg_path = Path()
 
@@ -64,14 +63,17 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
                 in_open_l[r,c] = True
     
      if [row,col] != [goal_r, goal_c]:
-         print("No se pudo calcular la ruta. :'(")
+         print("Cannot calculate path. :'(")
          return []
-     print("Ruta calculada :D ")
+     print("Path calculated succesfully :D ")
      path = []
-     while [previous[row,col][0],previous[row,col][1]] != [1,-1]:
+     while [previous[row,col][0],previous[row,col][1]] != [-1,-1]:
          path.insert(0,[row, col])
          [row,col] = previous[row,col]
      return path
+    
+    path = []
+    return path
 
 def get_maps():
     print("Getting inflated and cost maps...")
@@ -96,7 +98,7 @@ def get_maps():
     cost_map     = numpy.reshape(numpy.asarray(cost_map.data)    , (static_map.info.height, static_map.info.width))
     return [static_map, inflated_map, cost_map]
 
-#def callback_a_star(req):
+def callback_a_star(req):
     [s_map, inflated_map, cost_map] = get_maps()
     res = s_map.info.resolution
     [sx, sy] = [req.start.pose.position.x, req.start.pose.position.y]
@@ -110,7 +112,7 @@ def get_maps():
     return GetPlanResponse(msg_path)
 
 def main():
-    print "PRACTICE 02 - " + FRAGOSO_LUNA
+    print "PRACTICE 02 - " + NAME
     rospy.init_node("practice02")
     rospy.wait_for_service('/static_map')
     rospy.Service('/path_planning/a_star_search'  , GetPlan, callback_a_star)
