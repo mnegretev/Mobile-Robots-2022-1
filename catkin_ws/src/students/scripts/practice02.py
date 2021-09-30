@@ -18,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Garcia Onate"
 
 msg_path = Path()
 
@@ -31,7 +31,50 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     # indicating the indices (cell coordinates) of the path cells.
     # If path cannot be found, return an empty tuple []
     #
-    path = []
+    print("checkpoint")
+    open_lista=[]
+    lista_adyacentes=[[1,0],[0,1],[-1,0],[0,-1], [1,1], [-1,1], [-1,-1],[1,-1]]
+    valores_g=numpy.full( grid_map.shape, float("inf"))
+    valores_f=numpy.full( grid_map.shape, float("inf"))
+    l_closed=numpy.full( grid_map.shape, False)
+    l_open=numpy.full( grid_map.shape, False)
+    previos=numpy.full((grid_map.shape[0], grid_map.shape[0], 2), -1)
+    print("checkpoint")
+    heapq.heappush(open_lista, (0, [start_r, start_c]))
+    valores_g[start_r, start_c] = 0
+    valores_f[start_r, start_c] = 0
+    l_open[start_r, start_c] = True
+    [row, col] = [start_r, start_c]
+    print("checkpoint")
+    #AQUI COMIENZA EL CALCULO DE A*
+    while [row, col] != [goal_r, goal_c] and len(open_lista) > 0:
+        print("checkpoint")
+        [row, col] = heapq.heappop(open_lista)[1]
+        l_closed[row,col] = True
+        nodos_lista_adyacente = [[row+i, col+j] for [i,j] in lista_adyacentes]
+        for [r,c] in nodos_lista_adyacente:
+            if grid_map[r,c] != 0 or l_closed[r,c]:
+                continue
+            g = valores_g[row, col] + math.sqrt((row-r)**2 + (col-c)**2) + cost_map[r,c]
+            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
+            f = g + h
+            if g < valores_g[r,c]:
+                valores_g[r,c] = g
+                valores_f[r,c] = f
+                previos[r,c] = [row,col]
+            if not l_open[r,c]:
+                heapq.heappush(open_lista, (valores_f[r,c], [r,c]))
+                l_open[r,c] = True
+           
+    if [row,col] != [goal_r, goal_c]:
+        print("Cannot calculate path. :'(")
+        return []
+
+    path = [] 
+    while [previos[row,col][0], previos[row,col][1] ]!= [-1,-1]:
+      path.insert(0, [row,col])
+      [row,col]=previos[row,col]
+
     return path
 
 def get_maps():
