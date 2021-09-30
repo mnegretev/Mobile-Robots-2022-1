@@ -96,7 +96,7 @@ def get_maps():
     cost_map     = numpy.reshape(numpy.asarray(cost_map.data)    , (static_map.info.height, static_map.info.width))
     return [static_map, inflated_map, cost_map]
 
-#def callback_a_star(req):
+def callback_a_star(req):
     [s_map, inflated_map, cost_map] = get_maps()
     res = s_map.info.resolution
     [sx, sy] = [req.start.pose.position.x, req.start.pose.position.y]
