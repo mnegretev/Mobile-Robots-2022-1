@@ -18,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Ramirez Castanon Jorge Francisco"
 
 msg_path = Path()
 
@@ -31,7 +31,76 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     # indicating the indices (cell coordinates) of the path cells.
     # If path cannot be found, return an empty tuple []
     #
+    
+    #
+    # Empezamos por crear las listas que almacenaran los datos de los nodos
+    #
+    open_list = []
+    in_closed_list = numpy.full(grid_map.shape, False)
+    in_open_list = numpy.full(grid_map.shape, False)
+
+    #
+    # Creamos arreglos g y f del tamano de grid_map y los llenamos con infinito. El arreglo previous
+    # se va a llenar con -1 y tiene mas columnas
+    #
+    g_values = numpy.full(grid_map.shape, float("inf"))
+    f_values = numpy.full(grid_map.shape, float("inf"))
+    previous = numpy.full((grid_map.shape[0], grid_map.shape[0],2), -1)
+
+    #
+    # Asignamos las reglas para revisar todas las celdas adyacentes a la actual
+    #
+    adjacents = [[1,0], [0,1], [-1,0], [0,-1], [1,1], [-1,1], [-1,-1], [1,-1]]
+
+    #
+    # Asignamos la pila, inicializamos los valores g y f en 0, y nos posicionamos en el nodo inicial
+    #
+    heapq.heappush(open_list, (0,[start_r, start_c]))
+    in_open_list[start_r, start_c] = True
+    g_values[start_r, start_c] = 0
+    f_values[start_r, start_c] = 0
+    [row, col] = [start_r, start_c]
+
+    #
+    # El primer while nos dice si la lista abierta esta vacia y si ya nos encontramos en el nodo
+    # objetivo.
+    #
+    while len(open_list) > 0 and [row, col] != [goal_r, goal_c]:
+        
+        #
+        #Ingresamos la celda actual a la lista abierta
+        #
+        [row, col] = heapq.heappop(open_list)[1]
+        in_closed_list[row,col] = True
+        
+        #
+        #Determinamos las celdas adyacentes y las analizamos con el 'for'
+        #
+        adjacents_nodes = [[row+i, col+j] for [i,j] in adjacents]
+        for [r,c] in adjacents_nodes:
+            if grid_map[r,c] != 0 or in_closed_list[r,c]:
+                continue
+            g = g_values[row, col]
+            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
+            f = g + h
+
+            if g < g_values[r,c]:
+                g_values[r,c] = g
+                f_values[r,c] = f
+                previous[r,c] = [row, col]
+            if not in_open_list[r,c]:
+                heapq.heappush(open_list, (f_values[r,c], [r,c]))
+                in_open_list[r,c] = True
+
+    if [row,col] != [goal_r, goal_c]:
+        print("Cannot calculate path.")
+        return[]
+    print("Path calculated succesfully")
+
     path = []
+    while [previous[row, col][0], previous[row,col][1]] != [-1, -1]:
+        path.insert(0,[row,col]
+        [row,col] = previous[row,col]
     return path
 
 def get_maps():
