@@ -66,9 +66,9 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
         print("Cannot calculate path. :'(")
         return []
     path = []
-    while [parent_nodes[row,col][0], parent_nodes[row,col][1]] != [-1,-1]:
+    while [previus[row,col][0], previus[row,col][1]] != [-1,-1]:
         path.insert(0, [row,col])
-        [row,col] = parent_nodes[row,col]
+        [row,col] = previus[row,col]
     print("Path calculated succesfully :D ")
     return path
 
