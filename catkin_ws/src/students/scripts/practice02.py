@@ -48,7 +48,7 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     while len(open_list) > 0 and [row, col] != [goal_r, goal_c]:
         [row, col] = heapq.heappop(open_list)[1]
         in_closed_l[row, col] = True
-        adjacents_nodes = [[row+1, col+j] for [i, j] in adjacents]
+        adjacents_nodes = [[row+i, col+j] for [i, j] in adjacents]
         for [r, c] in adjacents_nodes:
             if grid_map[r, c] != 0 or in_closed_l[r, c]:
                 continue
