@@ -3,7 +3,7 @@
 # AUTONOMOUS MOBILE ROBOTS - UNAM, FI, 2022-1
 # PRACTICE 0 - THE PLATFORM ROS 
 #
-# Instructions:
+# instruction:
 # Write a program to move the robot forward until the laser
 # detects an obstacle in front of it.
 # Required publishers and subscribers are already declared and initialized.
@@ -22,8 +22,6 @@ def callback_scan(msg):
     # Do something to detect if there is an obstacle in front of the robot.
     # Set the 'obstacle_detected' variable with True or False, accordingly.
     #
-    obstacle_detected = msg.ranges[len(msg.ranges)//2] < 1.0
-    print(obstacle_detected)
     return
 
 def main():
