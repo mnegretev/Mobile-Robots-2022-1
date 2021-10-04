@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "CADENA CAMPOS  LUIS"
 
 msg_smooth_path = Path()
 
@@ -24,7 +24,7 @@ def smooth_path(Q, alpha, beta):
     print("Smoothing path with params: " + str([alpha,beta]))
     #
     # TODO:
-    # Write the code to smooth the path Q, using the gradient descend algorithm,
+    # Write the code to smooth the path Q, using the gradient descend algorithm,QQ
     # and return a new smoothed path P.
     # Path is composed of a set of points [x,y] as follows:
     # [[x0,y0], [x1,y1], ..., [xn,ym]].
@@ -35,7 +35,13 @@ def smooth_path(Q, alpha, beta):
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
     epsilon = 0.1                       
-    
+    nabla[0]=0
+    nabla[n-1]=0
+    while np.linalg.norm(nabla) > tol and steps < 100000:
+      for i in range (1,n-1):
+        nabla[i] = beta*(P[i] - Q[i]) + alpha*(2*p[i] - p[i-1]-p[i+1])
+      P= P - (epsilon*nabla)
+      steps +=1
     return P
 
 def callback_smooth_path(req):
@@ -48,7 +54,7 @@ def callback_smooth_path(req):
     return SmoothPathResponse(smooth_path=msg_smooth_path)
 
 def main():
-    print "PRACTICE 03 - " + NAME
+    print ("PRACTICE 03 - " + NAME)
     rospy.init_node("practice03", anonymous=True)
     rospy.Service('/path_planning/smooth_path', SmoothPath, callback_smooth_path)
     pub_path = rospy.Publisher('/path_planning/smooth_path', Path, queue_size=10)
