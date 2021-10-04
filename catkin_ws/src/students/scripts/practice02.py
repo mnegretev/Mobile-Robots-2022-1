@@ -18,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "CADENA CAMPOS LUIS "
 
 msg_path = Path()
 
@@ -31,7 +31,45 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     # indicating the indices (cell coordinates) of the path cells.
     # If path cannot be found, return an empty tuple []
     #
+    open_list   = []
+    in_closed_l = numpy.full( grid_map.shape, False)
+    in_open_l   = numpy.full( grid_map.shape, False)
+    g_values    = numpy.full( grid_map.shape, float("inf"))
+    f_values    = numpy.full( grid_map.shape, float("inf"))
+    previous    = numpy.full((grid_map.shape[0], grid_map.shape[0], 2), -1)
+    adjacents   = [[1,0],[0,1],[-1,0],[0,-1], [1,1], [-1,1], [-1,-1],[1,-1]]
+    heapq.heappush(open_list, (0, [start_r, start_c]))
+    in_open_l[start_r, start_c] = True
+    g_values[start_r, start_c] = 0
+    f_values[start_r, start_c] = 0
+    [row, col] = [start_r, start_c]
+
+    while len(open_list) > 0 and [row, col] != [goal_r, goal_c]:
+        [row, col] = heapq.heappop(open_list)[1]
+        in_closed_l[row,col] = True
+        adjacents_nodes = [[row+i, col+j] for [i,j] in adjacents]
+        for [r,c] in adjacents_nodes:
+            if grid_map[r,c] != 0 or in_closed_l[r,c]:
+                continue
+            g = g_values[row, col] + math.sqrt((row-r)**2 + (col-c)**2) + cost_map[r,c]
+            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
+            f = g + h
+            if g < g_values[r,c]:
+                g_values[r,c] = g
+                f_values[r,c] = f
+                previous[r,c] = [row,col]
+            if not in_open_l[r,c]:
+                heapq.heappush(open_list, (f_values[r,c], [r,c]))
+                in_open_l[r,c] = True
+                
+    if [row,col] != [goal_r, goal_c]:
+        print("Cannot calculate path. :'(")
+        return []
+    print("Path calculated succesfully :D ")
     path = []
+    while [row,col] != [-1,-1]: 
+         path.insert(0,[row,col])   #poner al principio, usar funcion insert , el indice va a ser 0
+         [row,col] = previous [row,col] #nc = Previo(nc)
     return path
 
 def get_maps():
@@ -71,7 +109,7 @@ def callback_a_star(req):
     return GetPlanResponse(msg_path)
 
 def main():
-    print "PRACTICE 02 - " + NAME
+    print ("PRACTICE 02 - " + NAME)
     rospy.init_node("practice02")
     rospy.wait_for_service('/static_map')
     rospy.Service('/path_planning/a_star_search'  , GetPlan, callback_a_star)
@@ -87,4 +125,3 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
-    
