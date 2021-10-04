@@ -31,7 +31,7 @@ def get_inflated_map(static_map, inflation_cells):
     for i in range(height):    ##Linea 24
    	    for j in range(width):
    	         if static_map[i,j] == 100:
-   	              for k1 in range (-inflation_cells,inflation_cells+1):
+   	              for k1 in range (inflation_cells,inflation_cells+1):
    	                  for k2 in range(-inflation_cells,inflation_cells+1):
    	                      inflated[i+k1,j+k2]=100
     
@@ -67,8 +67,9 @@ def get_cost_map(static_map, cost_radius):
            if static_map[i,j] == 100:
                 for k1 in range(-cost_radius,cost_radius+1):
                     for k2 in range(-cost_radius,cost_radius+1):
-                        c= cost_radius - max(k2,k1)+1
-                        cost_map[i+k1,j+k2] = max(cost_map[i+k1,j+k2],c)
+                        c= cost_radius - max(abs(k2),abs(k1))+1
+                        M= cost_map[i+k1,j+k2]                        
+                        cost_map[i+k1,j+k2] = max(c,M)
     #
     # TODO:
     # Write the code necessary to calculate a cost map for the given map.
