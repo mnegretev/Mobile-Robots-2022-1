@@ -13,7 +13,7 @@ import rospy
 from sensor_msgs.msg   import LaserScan
 from geometry_msgs.msg import Twist
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Galarza_Martinez"
 
 def callback_scan(msg):
     global obstacle_detected
@@ -22,6 +22,8 @@ def callback_scan(msg):
     # Do something to detect if there is an obstacle in front of the robot.
     # Set the 'obstacle_detected' variable with True or False, accordingly.
     #
+    obstacle_detected = msg.ranges[len(msg.ranges)//2] < 1.0  #divide las lecturas a la mitad por que nos interesa saber la lectura de enmedio para ver si choca, menor a 1
+    print(obstacle_detected)
     return
 
 def main():
