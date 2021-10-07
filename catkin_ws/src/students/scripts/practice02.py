@@ -65,11 +65,12 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     if[row,col] != [goal_r, goal_c]:
         print("Cannot calculate path. :'(")
         return[]
+
+    print("Path calculated succesfully :D ")
     path = []
-    while [parent_nodes[r,c][0], parent_nodes[r,c][1]] != [-1,-1]:
-        path.insert(0, [row,col])
-        [row,ccol] = parent_nodes[r,c]
-    print("Path calculated succesfully :D " + str(steps) + " steps")
+    while [row, col] != [-1, -1]:
+	path.insert(0,[row, col])
+	[row, col] = previous[row, col]
     return path
 
 
