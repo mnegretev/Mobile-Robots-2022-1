@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "montoya_martinez"
 
 msg_smooth_path = Path()
 
@@ -34,8 +34,18 @@ def smooth_path(Q, alpha, beta):
     P = numpy.copy(Q)
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
-    epsilon = 0.1                       
-    
+    epsilon = 0.1   
+    #Desarrollo de la practica 3                    
+    nabla[0]=0  #Establecemos el valor de tabla como cero
+    nabla[len(nabla)-1]=0  #Esto indica que el ultimo valor sera cero 
+    steps=0  #Declaramos que step inicia en cero
+    while numpy.linalg.norm(nabla) > tol and steps <100000:
+    #Iniciamos un ciclo while donde mientras que el valor de nabla sea mayor que tol y que sean menos de cien mil pasos realice el ciclo
+	for i in range (1, len(nabla)-1): 
+	#Iniciamos un ciclo for donde se indica que comenzamos desde uno hasta el ultimo valor de nabla
+	    nabla[i]=beta*(P[i]-Q[i])+alpha*(2*P[i]-P[i-1]-P[i+1])  #esta funcion la vimos en clase, establece la manera en que cambiamos los puntos de la ruta original 
+	P=P-epsilon*nabla  #Indicamos que los nuevos puntos se moveran en sentido contrario a nabla
+	steps+=1 #sumamos uno al step
     return P
 
 def callback_smooth_path(req):
