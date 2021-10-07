@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "CADENA CAMPOS  LUIS"
+NAME = "CADENA CAMPOS LUIS "
 
 msg_smooth_path = Path()
 
@@ -24,26 +24,26 @@ def smooth_path(Q, alpha, beta):
     print("Smoothing path with params: " + str([alpha,beta]))
     #
     # TODO:
-    # Write the code to smooth the path Q, using the gradient descend algorithm,QQ
+    # Write the code to smooth the path Q, using the gradient descend algorithm,
     # and return a new smoothed path P.
     # Path is composed of a set of points [x,y] as follows:
     # [[x0,y0], [x1,y1], ..., [xn,ym]].
     # The smoothed path must have the same shape.
     # Return the smoothed path.
     #
-    P = numpy.copy(Q)
-    tol     = 0.00001                   
+    P = numpy.copy(Q)  #P <-- Q
+    tol     = 0.00001                 #Tenemos una tolerancia de 0.00001
     nabla   = numpy.full(Q.shape, float("inf"))
-    epsilon = 0.1                       
-    nabla[0]=0
-    nabla[len(n)-1]=0
-    steps = 0   #Inicializamos la variable steps para que comienze en 0.
-    while numpy.linalg.norm(nabla) > tol and steps < 100000:  #Steps debe ser menor a 1000
-      for i in range (1,len(n)-1):
-        nabla[i] = beta*(P[i] - Q[i]) + alpha*(2*P[i] - P[i-1]-P[i+1])
+    epsilon = 0.1
+    nabla[0]=0 #Hacemos que valor de nabla[0] en el indece 0 sea igual a 0
+    nabla[len(nabla)-1]=0 #Se usa la funcion len ya que nos permite medir nuestra lista y se puede retornar a la funcion "range"
+    steps = 0   #Creamos nuestra variable step y se inicializa en 0
+    while numpy.linalg.norm(nabla) > tol and steps < 100000:  #Usamos la biblioteca numpy para calcular la norma del vector y creamos un rango
+      for i in range (1,len(nabla)-1): 
+        nabla[i] = beta*(P[i] - Q[i]) + alpha*(2*P[i] - P[i-1]-P[i+1]) #Empleamos la expresion matematica que obtuvimos del gradiente
       P= P - (epsilon*nabla)
-      steps +=1 #Steps aumenta en una unidad o en un paso
-    return P
+      steps +=1 #Se incrementa la variable pasos
+    return P                       
 
 def callback_smooth_path(req):
     alpha = rospy.get_param('/path_planning/smoothing_alpha')
@@ -55,7 +55,7 @@ def callback_smooth_path(req):
     return SmoothPathResponse(smooth_path=msg_smooth_path)
 
 def main():
-    print ("PRACTICE 03 - " + NAME)
+    print "PRACTICE 03 - " + NAME
     rospy.init_node("practice03", anonymous=True)
     rospy.Service('/path_planning/smooth_path', SmoothPath, callback_smooth_path)
     pub_path = rospy.Publisher('/path_planning/smooth_path', Path, queue_size=10)
@@ -70,4 +70,3 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
-    
