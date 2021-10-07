@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Galarza_MArtinez_Abel"
 
 msg_smooth_path = Path()
 
@@ -33,8 +33,18 @@ def smooth_path(Q, alpha, beta):
     #
     P = numpy.copy(Q)
     tol     = 0.00001                   
-    nabla   = numpy.full(Q.shape, float("inf"))
+    nabla   = numpy.full(Q.shape, float("inf")) #funcion de costo
     epsilon = 0.1                       
+    nabla[0]=0 #para los puntos inicila y final, que no se muevan
+    nabla[len(n)-1]=0
+    steps = 0   
+    
+    while numpy.linalg.norm(nabla) > tol and steps < 100000:  #algoritmos de descenso de gradiente
+      for i in range (1,len(n)-1):
+        nabla[i] = beta*(P[i] - Q[i]) + alpha*(2*P[i] - P[i-1]-P[i+1])
+      P= P - (epsilon*nabla)
+      steps +=1 #Steps aumenta en una unidad o en un paso
+      retunr ("listo")
     
     return P
 
