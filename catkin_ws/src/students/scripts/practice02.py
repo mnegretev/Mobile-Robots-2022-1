@@ -69,6 +69,7 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     path = []
     while [previous[row,col][0],previous[row,col][1]]!=[-1,-1]:
         path.insert(0,[row,col])
+	[row,col]=previous[row,col]
     return path
     
 
