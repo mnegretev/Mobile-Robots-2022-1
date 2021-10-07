@@ -52,8 +52,8 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
         for [r,c] in adjacents_nodes:
             if grid_map[r,c] != 0 or in_closed_l[r,c]:
                 continue
-            g = g_values[row, col] + math.sqrt((row-r)*2 + (col-c)*2) + cost_map[r,c]
-            h = math.sqrt((goal_r - r)*2 + (goal_c - c)*2)
+            g = g_values[row, col] + math.sqrt((row-r)**2 + (col-c)**2) + cost_map[r,c]
+            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
             f = g + h
             if g < g_values[r,c]:
                 g_values[r,c] = g
@@ -68,9 +68,9 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
          return []
      print("Ruta calculada :D ")
      path = []
-     while [previous[row,col][0],previous[row,col][1]] != [1,-1]:
-         path.insert(0,[row, col])
-         [row,col] = previous[row,col]
+     while [row,col]!=[-1,-1]:
+	path.insert(0,[row,col])
+	[row,col] = previous[row,col]
      return path
 
 def get_maps():
