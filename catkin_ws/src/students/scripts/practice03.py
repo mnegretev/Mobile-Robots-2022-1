@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Ramirez Castanon"
 
 msg_smooth_path = Path()
 
@@ -31,10 +31,40 @@ def smooth_path(Q, alpha, beta):
     # The smoothed path must have the same shape.
     # Return the smoothed path.
     #
+
+    #
+    # Primero hacemos que el conjunto de puntos P sea igual a la ruta original.
+    #
     P = numpy.copy(Q)
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
-    epsilon = 0.1                       
+    epsilon = 0.1
+    
+    #
+    # El primer y ultimo termino de nabla deben ser 0.
+    #
+    nabla[0] = 0
+    nabla[len(Q)-1] = 0
+    steps = 1
+
+    #
+    # Mientras que el arreglo de nabla sea mayor a la tolerancia.
+    # Tambien ponemos un numero maximo de pasos para evitar que se trabe el
+    # programa en caso de que falle.
+    #
+    while numpy.linalg.norm(nabla) > tol and steps < 50000:
+        
+        #
+        # Recorremos todo el arreglo desde el primer termino hasta el penultimo.
+        #
+        for i in range(1, len(Q)-1):
+            nabla[i] = beta*(P[i]-Q[i]) + alpha*(2*P[i]-P[i-1]-P[i+1])
+        
+        #
+        # Despues recorremos el arreglo P en sentido opuesto una epsilon*gradiente.
+        #
+        P = P - (epsilon*nabla)
+        steps += 1
     
     return P
 
