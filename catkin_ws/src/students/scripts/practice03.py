@@ -34,8 +34,15 @@ def smooth_path(Q, alpha, beta):
     P = numpy.copy(Q)
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
-    epsilon = 0.1                       
-    
+    epsilon = 0.1     
+    nabla[0] = 0 
+    nabla[n-1] = 0 
+    while abs(nabla)>tol and steps < 100000:
+        for i in range(1, n-1):
+	    nabla[i] = beta*(P[i]-q[i]) + aplha*(2*P[i]- P[i-1] - P[i+1])
+	P = P - epsilon*nabla
+	steps += 1 
+         
     return P
 
 def callback_smooth_path(req):

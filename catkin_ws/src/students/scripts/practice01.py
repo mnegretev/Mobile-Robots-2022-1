@@ -15,19 +15,26 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "FULL_NAME"
+NAME = "JOSE_FERNANDO_CRISTOVAL_HUERTA"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
     inflated = numpy.copy(static_map)
     [height, width] = static_map.shape
     #
-    # TODO:
+    # TODO:	
     # Write the code necessary to inflate the obstacles in the map a radius
     # given by 'inflation_cells' (expressed in number of cells)
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
+    for i in range(height):
+	for j in range(width):
+	    if static_map[i,j]== 100:
+	        for k1 in range(-inflation_cells, inflation_cells+1):
+		    for k2 in range(-inflation_cells, inflation_cells+1):
+		        inflated[i+k1, j+k2] = 100
+
     return inflated
 
 def get_cost_map(static_map, cost_radius):
@@ -55,7 +62,15 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
-    
+
+    for i in range(height):
+        for j in range(width):
+	    if static_map[i,j]== 100:
+	        for k1 in range(-cost_radius, cost_radius+1):
+		    for k2 in range(-cost_radius, cost_radius+1):
+		        c = cost_radius - max(k2,k1) + 1
+			cost_map[i+k1, j+k2] = max(cost_map[i+k1, j+k2], c)
+
     return cost_map
 
 def callback_inflated_map(req):

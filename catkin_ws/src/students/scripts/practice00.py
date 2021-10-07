@@ -43,6 +43,9 @@ def main():
         # Use the 'obstacle_detected' variable to check if there is an obstacle. 
         # Publish the Twist message using the already declared publisher 'pub_cmd_vel'.
         #
+	msg = Twist()
+	msg.linear.x = 0.3 if not obstacle_detected else 0.0
+	pub_cmd_vel.publish(msg)
         loop.sleep()
 
 
