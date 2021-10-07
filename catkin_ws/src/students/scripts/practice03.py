@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Infante Gonzalez Hector Said"
 
 msg_smooth_path = Path()
 
@@ -29,13 +29,27 @@ def smooth_path(Q, alpha, beta):
     # Path is composed of a set of points [x,y] as follows:
     # [[x0,y0], [x1,y1], ..., [xn,ym]].
     # The smoothed path must have the same shape.
-    # Return the smoothed path.
+    # Return the smoothed path.a
     #
     P = numpy.copy(Q)
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
-    epsilon = 0.1                       
+    epsilon = 0.1  
+        #Nabla es cero  
+    nabla[0]=0
+    nabla[len(nabla)-1]=0
+    #Step con valor de cero
+    steps=0
     
+    while numpy.linalg.norm(nabla) > tol and steps <100000:
+    
+      for i in range (1, len(nabla)-1): 
+     # nabla=alpha por el iesimo punto menos el correspondiente punto de la ruta original mas beta por dos veces el 
+    # iesimo punto, menos el punto posterior, menos el punto anterior. 
+        nabla[i]=beta*(P[i]-Q[i])+alpha*(2*P[i]-P[i-1]-P[i+1])
+   
+      P=P-epsilon*nabla
+      steps+=1
     return P
 
 def callback_smooth_path(req):
@@ -57,10 +71,10 @@ def main():
     while not rospy.is_shutdown():
         pub_path.publish(msg_smooth_path)
         loop.sleep()
+name = 'main'
 
-if __name__ == '__main__':
+if name == 'main':
     try:
         main()
     except rospy.ROSInterruptException:
         pass
-    
