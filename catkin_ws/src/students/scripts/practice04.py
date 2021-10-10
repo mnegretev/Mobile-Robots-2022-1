@@ -17,7 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Murrieta Villegas"
 
 pub_cmd_vel = None
 loop        = None
@@ -26,21 +26,32 @@ listener    = None
 def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     cmd_vel = Twist()
     
-    #
-    # TODO:
     # Implement the control law given by:
-    #
+    # where error_a is the angle error and v and w are the linear and angular 
+    # speeds taken as input signals and v_max, w_max, alpha and beta, are tunning constants.
+    alpha=0.1
+    beta=0.1
+
+    error_a=(math.atan2(goal_y-robot_y,goal_x-robot_x))-robot_a
+
+    if error_a > math.pi:
+        error_a = error_a-2*math.pi
+    
+    elif error_a <= -math.pi:
+        error_a = error_a+2*math.pi
+
     # v = v_max*math.exp(-error_a*error_a/alpha)
     # w = w_max*(2/(1 + math.exp(-error_a/beta)) - 1)
-    #
-    # where error_a is the angle error and
-    # v and w are the linear and angular speeds taken as input signals
-    # and v_max, w_max, alpha and beta, are tunning constants.
+    v = 0.5*math.exp(-error_a*error_a/alpha)
+    w = 0.5*(2/(1 + math.exp(-error_a/beta)) - 1)
+
+
     # Store the resulting v and w in the Twist message cmd_vel
-    # and return it (check online documentation for the Twist message).
-    # Remember to keep error angle in the interval (-pi,pi]
-    #
-    
+    cmd_vel.linear.x=v
+    cmd_vel.angular.z=w
+
+
+    # Return it (check online documentation for the Twist message).
     return cmd_vel
 
 def follow_path(path):
@@ -50,23 +61,45 @@ def follow_path(path):
     # Path is given as a sequence of points [[x0,y0], [x1,y1], ..., [xn,yn]]
     # The publisher for the twist message is already declared as 'pub_cmd_vel'
     # You can use the following steps to perform the path tracking:
-    #
+
+ 
+    idx=0
+
     # Set local goal point as the first point of the path
+    [local_x,local_y]=path[idx]
+
     # Set global goal point as the last point of the path
+    [global_x,global_y]=path[-1]
+
     # Get robot position with [robot_x, robot_y, robot_a] = get_robot_pose(listener)
+    [robot_x, robot_y, robot_a] = get_robot_pose(listener)
+
     # Calculate global error as the magnitude of the vector from robot pose to global goal point
+    global_error=math.sqrt((global_x-robot_x)**2+(global_y-robot_y)**2)
+    
     # Calculate local  error as the magnitude of the vector from robot pose to local  goal point
-    #
+    local_error=math.sqrt((local_x-robot_x)**2+(local_y-robot_y)**2)
+    
     # WHILE global error > tol and not rospy.is_shutdown() #This keeps the program aware of signals such as Ctrl+C
-    #     Calculate control signals v and w and publish the corresponding message
-    #     loop.sleep()  #This is important to avoid an overconsumption of processing time
-    #     Get robot position
-    #     Calculate local error
-    #     If local error is less than 0.3 (you can change this constant)
-    #         Change local goal point to the next point in the path
-    #     Calculate global error
-    # Send zero speeds (otherwise, robot will keep moving after reaching last point)
-    #
+    while global_error>0.1 and not rospy.is_shutdown():
+
+        #Calculate control signals v and w and publish the corresponding message
+        pub_cmd_vel.publish(calculate_control(robot_x,robot_y,robot_a,local_x,local_y))
+        loop.sleep() 
+
+        # Get robot position and Calculate local error
+        [robot_x, robot_y, robot_a] = get_robot_pose(listener)
+        local_error=math.sqrt((local_x-robot_x)**2+(local_y-robot_y)**2)
+        
+        if local_error<0.3:
+            idx+=1
+            if idx>=len(path):
+                idx=len(path)-1
+            [local_x,local_y]=path[idx]
+            
+        
+        global_error=math.sqrt((global_x-robot_x)**2+(global_y-robot_y)**2)
+    pub_cmd_vel.publish(Twist())
     return
     
 def callback_global_goal(msg):
