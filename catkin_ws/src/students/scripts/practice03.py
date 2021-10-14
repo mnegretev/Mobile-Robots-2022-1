@@ -29,7 +29,7 @@ def smooth_path(Q, alpha, beta):
     # Path is composed of a set of points [x,y] as follows:
     # [[x0,y0], [x1,y1], ..., [xn,ym]].
     # The smoothed path must have the same shape.
-    # Return the smoothed path.
+    # Return the smoothed path.a
     #
     P = numpy.copy(Q)
     tol     = 0.00001                   
