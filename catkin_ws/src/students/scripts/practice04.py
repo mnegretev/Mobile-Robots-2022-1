@@ -17,7 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Manzo_Soto_Jorge_Luis"
 
 pub_cmd_vel = None
 loop        = None
@@ -40,7 +40,32 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     # and return it (check online documentation for the Twist message).
     # Remember to keep error angle in the interval (-pi,pi]
     #
-    
+    #Comenzamos declarando las variables para nuestros valores de alpha y de beta respectivamente para iniciar con
+    # el procedimiento
+    A = 0.1
+    B = 0.1
+    #Posteriormente declaramos nuestras variables de la velocidad, las cuales nos ayudaran a establecer la manera 
+    # en que nuestro objeto sera controlado
+    v_max = 1.1
+    w_max = 1.1
+    #Posteriormente, establecemos y declaramos el valor que va a tener nuestro angulo, esto se tomara en cuenta 
+    # al momento de utilizar nuestras velocidad 
+    error_a = (math.atan2(goal_y - robot_y, goal_x - robot_x)) - robot_a
+    # establecemos las condiciones para el menejo de dicho error, tenemos dos casos, el caso de que nuestro 
+    # error ya mencionado sea mayor a nuestro pi
+    if(error_a > math.pi):
+	error_a = error_a-2*math.pi
+    # por otro lado tenemos el caso de que nuestro valor del error sea mayor al valor ya mencionado, despues de 
+    # esto continuamos con la operacion
+    if(error_a < -math.pi):
+	error_a = error_a+2*math.pi
+    # Establecemos las leyes que van a controlar la velocidad angular de nuestro sistema
+    v = v_max*math.exp(-error_a*error_a/A)
+    w = w_max*(2/(1+math.exp(-error_a/B))-1)
+    # Por ultimo, almacenamos los valores que hemos calculado en nuestra programacion y los mandamos a un twist, 
+    # de esta manera regresamos lo calculado a nuestro sistema 
+    cmd_vel.linear.x = v
+    cmd_vel.angular.z = w
     return cmd_vel
 
 def follow_path(path):
@@ -67,6 +92,41 @@ def follow_path(path):
     #     Calculate global error
     # Send zero speeds (otherwise, robot will keep moving after reaching last point)
     #
+    # Inicializamos nuestra variable idx para comenzar con nuestra siguiente parte del sistema
+    idx=0
+    # Incializamos nuestro primero elemento del sistema, para esto, llamamos nuestra locaclizacion local, es decir 
+    # el punto en donde se encuentra nuestro robot
+    [local_x,local_y] = path[idx] 
+    # Declaramos nuestro ultimo punto del sistema, este es un punto global, es decir el punto de nuestro 
+    # mapa que se encuentra hasta el ultimo
+    [global_x,global_y] = path[-1] 
+    # recibimos la localizacion exacta de nuestro robot con el siguiente comando, con esto, podemos comenzar a 
+    # desarrollar nuestro sistema
+    [robot_x, robot_y, robot_a] = get_robot_pose(listener) 
+    #AL igual que en el caso anterior, tenemos que desarrollar y declarar una serie de errores que de no hacerlo 
+    # van a afectar nuestro sistema de manra significativa 
+    global_error = math.sqrt((global_x-robot_x)**2+(global_y-robot_y)**2)
+    local_error = math.sqrt((local_x-robot_x)**2+(local_y-robot_y)**2)
+    # Establecemos la condicion de que el proceso seguira en el caso de que el usuario no termine con la ejecucion
+    # es decir, que presione control c 
+    while global_error > 0.1 and not rospy.is_shutdown():
+    # Procedemos a calcular el control con el siguiente comando, con esto pasamos a almacenarlo y continuamos con 
+    # la operacion
+        pub_cmd_vel.publish(calculate_control(robot_x,robot_y,robot_a,local_x,local_y)) 
+        loop.sleep() 
+    #de nuevo obtenemos la posicion del robot 
+        [robot_x, robot_y, robot_a] = get_robot_pose(listener) 
+        local_error=math.sqrt((local_x-robot_x)**2+(local_y-robot_y)**2)
+    #establecemos una condicinal referente a el error de la posicion de nuestro robot
+        if local_error < 0.3:
+            idx += 1
+            if idx >= len(path):
+                idx = len(path)-1
+    # establecemos un nuevo punto 
+            [local_x,local_y]=path[idx]
+        global_error=math.sqrt((global_x-robot_x)**2+(global_y-robot_y)**2)
+    pub_cmd_vel.publish(Twist())
+   #publicamos los datos
     return
     
 def callback_global_goal(msg):
