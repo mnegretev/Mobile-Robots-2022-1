@@ -35,7 +35,7 @@ def smooth_path(Q, alpha, beta):
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
     epsilon = 0.1   
-    #
+    
     nabla[0]=0
     nabla[len(nabla)-1]=0
     steps=0
