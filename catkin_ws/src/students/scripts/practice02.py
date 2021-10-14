@@ -18,7 +18,7 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "CRUZ_TORRES"
+NAME = "cruz_torres"
 
 msg_path = Path()
 
@@ -51,8 +51,8 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
         for [r,c] in adjacents_nodes:
             if grid_map[r,c] != 0 or in_closed_l[r,c]:
                 continue
-            g = g_values[row, col] + math.sqrt((row-r)**2 + (col-c)**2) + cost_map[r,c]
-            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
+            g = g_values[row, col] + math.sqrt((row-r)*2 + (col-c)*2) + cost_map[r,c]
+            h = math.sqrt((goal_r - r)*2 + (goal_c - c)*2)
             f = g + h
             if g < g_values[r,c]:
                 g_values[r,c] = g
@@ -63,8 +63,8 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
                 in_open_l[r,c] = True
     
     if [row,col] != [goal_r, goal_c]:
-        print("Cannot calculate path. :'(")
-        return []
+         print("Cannot calculate path. :'(")
+         return []
     print("Path calculated succesfully :D ")
     path = []
     while [previous[row,col][0],previous[row,col][1]] != [-1,-1]:
@@ -72,8 +72,6 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
         [row,col] = previous[row,col]
     return path
     
-    path = []
-    return path
 
 def get_maps():
     print("Getting inflated and cost maps...")
@@ -111,9 +109,8 @@ def callback_a_star(req):
         msg_path.poses.append(PoseStamped(pose=Pose(position=Point(x=(c*res + zx), y=(r*res + zy)))))
     return GetPlanResponse(msg_path)
 
-
 def main():
-    print "PRACTICE 02 - CRUZ_TORRES"
+    print "PRACTICE 02 - cruz_torres "
     rospy.init_node("practice02")
     rospy.wait_for_service('/static_map')
     rospy.Service('/path_planning/a_star_search'  , GetPlan, callback_a_star)
@@ -124,9 +121,8 @@ def main():
         pub_path.publish(msg_path)
         loop.sleep()
 
-if __name__ == '__main__':
+if name == "main":
     try:
         main()
     except rospy.ROSInterruptException:
         pass
-    
