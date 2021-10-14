@@ -9,7 +9,9 @@
 # must be 0.8 and 1.0 respectively.
 #
 
+from logging import error
 import rospy
+import numpy
 import tf
 import numpy
 import math
@@ -18,8 +20,16 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
+<<<<<<< HEAD
 NAME = "Juarez Castillo"
 
+||||||| merged common ancestors
+NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+
+=======
+NAME = "Juarez Castillo"
+ 
+>>>>>>> 0cf988aa963c8309056eb7f4112cf2c349ba4b4d
 pub_cmd_vel = None
 loop        = None
 listener    = None
@@ -31,6 +41,7 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     # TODO:
     # Implement the control law given by:
     #
+<<<<<<< HEAD
      error_a=math.atan2(goal_y-robot_y,goal_x-robot_x)-robot_a
     v_max=1
     w_max=1
@@ -45,6 +56,25 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
 
     v = v_max*math.exp(-error_a*error_a/alpha)
     w = w_max*(2/(1 + math.exp(-error_a/beta)) - 1)
+||||||| merged common ancestors
+    # v = v_max*math.exp(-error_a*error_a/alpha)
+    # w = w_max*(2/(1 + math.exp(-error_a/beta)) - 1)
+=======
+    error_a=math.atan2(goal_y-robot_y,goal_x-robot_x)-robot_a
+    v_max=1
+    w_max=1
+    alpha=0.8
+    beta=0.8
+
+    # Acotando entre -pi, pi
+    if error_a>math.pi:
+        error_a-=2*math.pi
+    if error_a<=math.pi:
+        error_a+=2*math.pi
+
+    v = v_max*math.exp(-error_a*error_a/alpha)
+    w = w_max*(2/(1 + math.exp(-error_a/beta)) - 1)
+>>>>>>> 0cf988aa963c8309056eb7f4112cf2c349ba4b4d
     #
     # where error_a is the angle error and
     # v and w are the linear and angular speeds taken as input signals
