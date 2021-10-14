@@ -34,9 +34,17 @@ def smooth_path(Q, alpha, beta):
     P = numpy.copy(Q)
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
-    epsilon = 0.1                       
-    
-    return P
+    epsilon = 0.1   
+    #
+    nabla[0]=0
+    nabla[len(nabla)-1]=0
+    steps=0
+    while numpy.linalg.norm(nabla) > tol and steps <100000:
+      for i in range (1, len(nabla)-1): 
+        nabla[i]=beta*(P[i]-Q[i])+alpha*(2*P[i]-P[i-1]-P[i+1])
+      P=P-epsilon*nabla
+      steps+=1
+    return P                    
 
 def callback_smooth_path(req):
     alpha = rospy.get_param('/path_planning/smoothing_alpha')
@@ -48,7 +56,7 @@ def callback_smooth_path(req):
     return SmoothPathResponse(smooth_path=msg_smooth_path)
 
 def main():
-    print "PRACTICE 03 - " + NAME
+    print "PRACTICE 03 - CRUZ_TORRES "
     rospy.init_node("practice03", anonymous=True)
     rospy.Service('/path_planning/smooth_path', SmoothPath, callback_smooth_path)
     pub_path = rospy.Publisher('/path_planning/smooth_path', Path, queue_size=10)
@@ -57,6 +65,7 @@ def main():
     while not rospy.is_shutdown():
         pub_path.publish(msg_smooth_path)
         loop.sleep()
+name = 'main'
 
 if __name__ == '__main__':
     try:

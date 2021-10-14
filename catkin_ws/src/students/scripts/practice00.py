@@ -43,7 +43,6 @@ def main():
         #
         loop.sleep()
 
-
 if __name__ == '__main__':
     try:
         main()
