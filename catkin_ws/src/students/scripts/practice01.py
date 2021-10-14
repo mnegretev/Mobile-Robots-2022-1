@@ -107,7 +107,7 @@ def callback_cost_map(req):
     
 def main():
     global static_map, inflation_radius, cost_radius
-    print "PRACTICE 02 - "
+    print "PRACTICE 02 -CRUZ TORRES "
     rospy.init_node("practice02")
     rospy.Service('/inflated_map', GetMap, callback_inflated_map)
     rospy.Service('/cost_map', GetMap, callback_cost_map)
