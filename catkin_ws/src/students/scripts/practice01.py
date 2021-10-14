@@ -97,6 +97,7 @@ def main():
     
     cost_radius      = 0.1
     inflation_radius = 0.1
+
     while not rospy.is_shutdown():
         if rospy.has_param("/path_planning/cost_radius"):
             new_cost_radius = rospy.get_param("/path_planning/cost_radius")
