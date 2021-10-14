@@ -73,7 +73,7 @@ def follow_path(path):
     [robot_x, robot_y, robot_a] = get_robot_pose(listener)
     eg=numpy.linalg.norm(Pg-[robot_x, robot_y])    # Calculate global error as the magnitude of the vector from robot pose to global goal point
     el=numpy.linalg.norm(Pl-[robot_x, robot_y])# Calculate local  error as the magnitude of the vector from robot pose to local  goal point
-   #Borrar!! https://github.com/mnegretev/Mobile-Robots-2022-1/blob/chavez_contreras/catkin_ws/src/students/scripts/practice04.py
+  
     # WHILE global error > tol and not rospy.is_shutdown() #This keeps the program aware of signals such as Ctrl+C
     tol=0.01
     while eg>tol and not rospy.is_shutdown():
