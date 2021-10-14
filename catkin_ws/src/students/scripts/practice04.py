@@ -17,7 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
-NAME = "CRUZ_TORRES"
+NAME = "CRUZ TORRES"
 
 pub_cmd_vel = None
 loop        = None
@@ -124,7 +124,7 @@ def get_robot_pose(listener):
 
 def main():
     global pub_cmd_vel, loop, listener
-    print "PRACTICE 04 -CRUZ_TORRES " 
+    print "PRACTICE 04 -CRUZ TORRES " 
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
