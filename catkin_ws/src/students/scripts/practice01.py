@@ -87,7 +87,7 @@ def main():
     rospy.init_node("practice01")
     rospy.wait_for_service('/static_map')
     pub_map  = rospy.Publisher("/inflated_map", OccupancyGrid, queue_size=10)
-    grid_map = rospy.ServiceProxy("/static_map", GetMap)().map
+    grid_map = rospy.ServiceProxy("/static_map", GetMap()).map
     map_info = grid_map.info
     width, height, res = map_info.width, map_info.height, map_info.resolution
     grid_map = numpy.reshape(numpy.asarray(grid_map.data, dtype='int'), (height, width))
