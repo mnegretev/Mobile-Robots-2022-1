@@ -111,6 +111,7 @@ def callback_a_star(req):
         msg_path.poses.append(PoseStamped(pose=Pose(position=Point(x=(c*res + zx), y=(r*res + zy)))))
     return GetPlanResponse(msg_path)
 
+
 def main():
     print "PRACTICE 02 - CRUZ_TORRES"
     rospy.init_node("practice02")
