@@ -16,7 +16,7 @@ from geometry_msgs.msg import Pose, PoseStamped, Point
 from custom_msgs.srv import SmoothPath
 from custom_msgs.srv import SmoothPathResponse
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "GARCIA ONATE MIGUEL ANGEL"
 
 msg_smooth_path = Path()
 
@@ -35,7 +35,30 @@ def smooth_path(Q, alpha, beta):
     tol     = 0.00001                   
     nabla   = numpy.full(Q.shape, float("inf"))
     epsilon = 0.1                       
-    
+
+    nabla_mag = 1 
+    pasos = 1 
+
+    while nabla_mag > tol and pasos < 10000:
+        nabla_mag = 0
+        tamano_de_P = len(P) - 1
+        for i in range(0,1):
+            nabla[0][i] = alpha* (P[0][i] - Q[0][i]) - beta * (P[1][i]-P[0][i])
+            P[0][i] = P[0][i] - epsilon * nabla[0][i]
+
+        #AQUI COMIENZA LA IMPLEMENTACION DEL ALGORITMO
+        for i in range(1,tamano_de_P - 1):
+            for j in range(0,1):
+                nabla[i][j] = alpha * (P[i][j] - Q[i][j]) + beta * (2*P[i][j] - P[i-1][j] - P[i+1][j])
+                P[i][j] = P[i][j] - epsilon * nabla[i][j]
+            
+        for i in range(0,1):
+            nabla[tamano_de_P][i] = alpha * (P[tamano_de_P][i] - Q[tamano_de_P][i]) + beta * (P[tamano_de_P][i] - P[tamano_de_P-1][i])
+            P[tamano_de_P][i] = P[tamano_de_P][i] - epsilon * nabla[tamano_de_P][i]
+
+        nabla_mag = numpy.linalg.norm(nabla) #ESTE TAMBIEN ME REGRESA LA NORMA DE NABLA, SOLO QUE ES DE NUMPY
+        pasos += 1 
+                      
     return P
 
 def callback_smooth_path(req):
