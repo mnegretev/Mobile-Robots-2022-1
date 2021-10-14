@@ -17,7 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "GALARZA_MARTINEZ_ABEL"
 
 pub_cmd_vel = None
 loop        = None
@@ -40,6 +40,30 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     # and return it (check online documentation for the Twist message).
     # Remember to keep error angle in the interval (-pi,pi]
     #
+    
+    
+    #variables de movimiento del robot
+    v_max=1
+    w_max=1
+    
+    alpha=0.5
+    beta=0.5
+    
+    error_angulo=math.atan2(goal_y - robot_y, goal_x - robot_x)-robot_a
+    #condicion para el caso de detectar el error de angulo
+    
+    if(error_angulo>math.pi):
+        error_angulo=error_angulo-2*math.pi
+        
+    if(error_angulo<-math.pi):
+        error_angulo=error_angulo+2*math.pi
+     #funciones de velocidad linear y angular
+    v=v_max*math.exp(-error_angulo*error_angulo/alpha)
+    w = w_max*(2/(1 + math.exp(-error_angulo/beta)) - 1)
+    
+    cmd_vel.linear.x=v
+    cmd_vel.angular.z=w
+    
     
     return cmd_vel
 
@@ -67,6 +91,30 @@ def follow_path(path):
     #     Calculate global error
     # Send zero speeds (otherwise, robot will keep moving after reaching last point)
     #
+    #comenzamos asignando el punto actual como cero 
+   idx=0 
+    [localx,localy]=path[idx] #primer punto como coordenadas locales
+    [globalx, globaly]=path[-1] #segundo como coordenadas meta
+    [robotx, roboty, robotang]=get_robot_pose(listener) #
+    #calculos para el erros global y local (el segundos se refiere al punto del robot)
+    global_error=math.sqrt((globalx-robotx)*2+(globaly-roboty)**2)
+    local_error=math.sqrt((localx-robotx)*2+(localy-roboty)**2)
+    
+    while global_error>0.1 and not rospy.is_shutdown():
+        pub_cmd_vel.publish(calculate_control(robotx, roboty, robotang,localx, localy))
+        loop.sleep()
+        [robotx, roboty, robotang]=get_robot_pose(listener)
+        local_error=math.sqrt((localx-robotx)*2+(localy-roboty)**2)
+        #definiendo la toleracia para el error local
+        if(local_error<0.3):
+            idx+=1
+            if idx >=len(path):
+                idx=len(path)-1
+            [localx,localy]=path[idx]
+        global_error=math.sqrt((globalx-robotx)*2+(globaly-roboty)**2)
+    pub_cmd_vel.publish(Twist())
+ 
+    
     return
     
 def callback_global_goal(msg):
