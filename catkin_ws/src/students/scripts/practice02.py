@@ -112,7 +112,7 @@ def callback_a_star(req):
     return GetPlanResponse(msg_path)
 
 def main():
-    print "PRACTICE 02 - " + Cruz Torres Sofia
+    print "PRACTICE 02 - CRUZ_TORRES"
     rospy.init_node("practice02")
     rospy.wait_for_service('/static_map')
     rospy.Service('/path_planning/a_star_search'  , GetPlan, callback_a_star)

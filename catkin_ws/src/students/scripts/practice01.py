@@ -1,14 +1,14 @@
+
 #!/usr/bin/env python
 #
 # AUTONOMOUS MOBILE ROBOTS - UNAM, FI, 2022-1
-# PRACTICE 01 - INFLATION AND COST MAPS
+# PRACTICE 1 - INFLATION AND COST MAPS
 #
 # Instructions:
 # Write the code necesary to get an inflated map and a cost map given
 # an inflation radius and a cost radius.
 #
 
-import sys
 import rospy
 import numpy
 from nav_msgs.msg import OccupancyGrid
@@ -16,8 +16,8 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "CRUZ_TORRES_SOFIA_ANGELICA"
-static_map = None
+NAME = "CRUZ_TORRES"
+
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
     inflated = numpy.copy(static_map)
@@ -25,17 +25,18 @@ def get_inflated_map(static_map, inflation_cells):
     #
     # TODO:
     # Write the code necessary to inflate the obstacles in the map a radius
-    # given by 'inflation_cells' (expressed in number of cells)
+    # given by 'inflation_cells'
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
-    for i in range(height ): #Va a rrecorrer el # de renglones
-         for j in range(width): #Va a  recorrer todas las columnas de esos renglones
-             if static_map[i,j]>0: 
-                 for k1 in range(i-inflation_cells, i+inflation_cells+1):  
-                     for k2 in range(j-inflation_cells, j+inflation_cells+1): 
-			inflated[k1,k2] = static_map[i,j]
+    for i in range(height):
+    	for j in range(width):# vamos recorriendo el mapa casilla por casilla
+    		if static_map[i, j] > 50:#compara si una celda esta vacia u ocupada
+    			for k1 in range(i-inflation_cells, i+inflation_cells+1):#nos va a inflar la celda respecto al radio del robot
+    				for k2 in range(j-inflation_cells, j+inflation_cells+1):
+    					inflated[k1,k2]=static_map[i,j]#rellenamos 
     return inflated
+#MAPA DE COSTOS
 
 def get_cost_map(static_map, cost_radius):
     if cost_radius > 20:
@@ -62,16 +63,14 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 X 3 3 3 2]
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
+    for i in range(0,width-1):
+		for j in range(0,height-1):#vamos pasando de celda en celda
+			if static_map[j,i] > 50:#comprobamos si la celda esta ocupada o vacia
+				for k1 in range(-cost_radius, +cost_radius):#vamos checando la proximidad
+					for k2 in range(-cost_radius, +cost_radius):
+						c = cost_radius + 1 - max(abs(k2),abs(k1))
+						cost_map[j+k2, i+k1] = max(c,cost_map[j+k2, i+k1])
     
-    for i in range(height ): #Va a rrecorrer el # de renglones
-         for j in range(width): #Va a  recorrer todas las columnas de esos renglones
-             if static_map[i,j]>0: 
-                 for k1 in range(-cost_radius,cost_radius+1):   
-                     for k2 in range(-cost_radius, cost_radius+1): 
-                         c_rad= cost_radius- max(abs(k1),abs(k2)) +1  
-                         c_map= cost_map[i+k1, j+k2]
-                         while c_map>c_rad:
-                            cost_map[i+k1, j+k2] = max(c_rad, c_map)
     return cost_map
 
 def callback_inflated_map(req):
