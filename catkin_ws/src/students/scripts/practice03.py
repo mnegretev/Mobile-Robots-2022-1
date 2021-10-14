@@ -56,7 +56,7 @@ def callback_smooth_path(req):
     return SmoothPathResponse(smooth_path=msg_smooth_path)
 
 def main():
-    print "PRACTICE 03 - CRUZ TORRES "
+    print "PRACTICE 03 - Cruz_Torres "
     rospy.init_node("practice03", anonymous=True)
     rospy.Service('/path_planning/smooth_path', SmoothPath, callback_smooth_path)
     pub_path = rospy.Publisher('/path_planning/smooth_path', Path, queue_size=10)
