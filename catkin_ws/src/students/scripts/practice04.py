@@ -45,8 +45,8 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     Alpha = 0.1
     Beta = 0.1
     #Cosntantes de velocidad
-    v_max = 0.7
-    w_max = 0.5
+    v_max = 0.8
+    w_max = 1.0
     #Error para el angulo
     error_a = (math.atan2(goal_y - robot_y, goal_x - robot_x)) - robot_a
     if(error_a > math.pi):
