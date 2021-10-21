@@ -17,7 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
-NAME = "CRUZ TORRES"
+NAME = "CRUZ_TORRES"
 
 pub_cmd_vel = None
 loop        = None
@@ -107,7 +107,7 @@ def callback_global_goal(msg):
     req = GetPlanRequest(goal=PoseStamped(pose=msg.pose))
     req.start.pose.position = Point(x=robot_x, y=robot_y)
     path = rospy.ServiceProxy('/path_planning/a_star_search', GetPlan)(req).plan
-    path = rospy.ServiceProxy('/path_planning/smooth_path',SmoothPath (SmoothPathRequest(path=path)).smooth_path
+    path = rospy.ServiceProxy('/path_planning/smooth_path',SmoothPath)(SmoothPathRequest(path=path)).smooth_path
     print "Following path with " + str(len(path.poses)) + " points..."
     follow_path([[p.pose.position.x, p.pose.position.y] for p in path.poses])
     print "Global goal point reached"
@@ -124,7 +124,7 @@ def get_robot_pose(listener):
 
 def main():
     global pub_cmd_vel, loop, listener
-    print "PRACTICE 04 -CRUZ TORRES " 
+    print("PRACTICE 04 -CRUZ_TORRES ")
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
@@ -132,9 +132,10 @@ def main():
     loop = rospy.Rate(10)
     print("Waiting for service for path planning...")
     rospy.wait_for_service('/path_planning/a_star_search')
-    print("Service for path planning is now available.")
+    print("Service for path planning is now available")
     rospy.spin()
 
+#__name__ = '__main__'
 if __name__ == '__main__':
     try:
         main()
