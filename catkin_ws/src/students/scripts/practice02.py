@@ -22,7 +22,7 @@ NAME = "cruz torres"
 
 msg_path = Path()
 
-def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map,name):
+def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     #
     # TODO:
     # Write the A* algorithm to find a path in an occupancy grid map given the start cell
@@ -51,8 +51,8 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map,name):
         for [r,c] in adjacents_nodes:
             if grid_map[r,c] != 0 or in_closed_l[r,c]:
                 continue
-            g = g_values[row, col] + math.sqrt((row-r)*2 + (col-c)*2) + cost_map[r,c]
-            h = math.sqrt((goal_r - r)*2 + (goal_c - c)*2)
+            g = g_values[row, col] + math.sqrt((row-r)**2 + (col-c)**2) + cost_map[r,c]
+            h = math.sqrt((goal_r - r)**2 + (goal_c - c)**2)
             f = g + h
             if g < g_values[r,c]:
                 g_values[r,c] = g
@@ -63,7 +63,7 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map,name):
                 in_open_l[r,c] = True
     
     if [row,col] != [goal_r, goal_c]:
-         print("Cannot calculate path. :'(")
+         print("Cannot calculate path :(")
          return []
     print("Path calculated succesfully :D ")
     path = []
