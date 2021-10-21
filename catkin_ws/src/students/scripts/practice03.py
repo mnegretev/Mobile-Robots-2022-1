@@ -65,7 +65,8 @@ def main():
     while not rospy.is_shutdown():
         pub_path.publish(msg_smooth_path)
         loop.sleep()
-name = 'main'
+
+__name__ = '__main__'
 
 if __name__ == '__main__':
     try:
