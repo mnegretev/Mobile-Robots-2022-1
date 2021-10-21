@@ -22,7 +22,7 @@ NAME = "cruz torres"
 
 msg_path = Path()
 
-def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
+def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map,name):
     #
     # TODO:
     # Write the A* algorithm to find a path in an occupancy grid map given the start cell
@@ -121,7 +121,7 @@ def main():
         pub_path.publish(msg_path)
         loop.sleep()
 
-if name == "main":
+if __name__ == "__main__":
     try:
         main()
     except rospy.ROSInterruptException:
