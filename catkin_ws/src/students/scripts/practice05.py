@@ -146,7 +146,7 @@ def callback_pot_fields_goal(msg):
         draw_force_markers(robot_x, robot_y, afx, afy, rfx, rfy, fx, fy, pub_markers)
         loop.sleep()
         [robot_x, robot_y, robot_a] = get_robot_pose(listener) 
-        dist_to_goal = math.sqrt((goal_x - robot_x)*2 + (goal_y - robot_y)*2)
+        dist_to_goal = math.sqrt((goal_x - robot_x)**2 + (goal_y - robot_y)**2)
     pub_cmd_vel.publish(Twist())
 
     print("Goal point reached")
