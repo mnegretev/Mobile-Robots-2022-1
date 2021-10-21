@@ -86,7 +86,7 @@ def follow_path(path):
     # Send zero speeds (otherwise, robot will keep moving after reaching last point)
     #
     idx = 0
-    tol = 1
+    tol = 0.1
 
     [local_x, local_y] = path[idx]    
     [pg_x, pg_y] = path[-1]
@@ -99,9 +99,8 @@ def follow_path(path):
         loop.sleep()
 	[robot_x, robot_y, robot_a] = get_robot_pose(listener)
 	el = math.sqrt((local_x - robot_x)**2 + (local_y - robot_y)**2)
-	idx = min(idx+a, len(path)-1)
-	if el < 0.3:
-	    [local_x, local_y] = path[idx]
+	idx = min(idx+1, len(path)-1) if el < 0.3 else idx
+	[local_x, local_y] = path[idx]
 	eg = math.sqrt((pg_x - robot_x)**2 + (pg_y - robot_y)**2)
 	    
     pub_cmd_vel.publish(Twist())
