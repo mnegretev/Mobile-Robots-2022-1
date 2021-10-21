@@ -41,19 +41,17 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     # Remember to keep error angle in the interval (-pi,pi]
     #
 
-    alpha = 0.1
-    betha = 0.1
-    v_max = 0.5
-    w_max = 2*math.pi
-    error_a = math.atan2(goal_y - robot_y, goal_x - robot_x) - robot_a 
+    alpha = 1.0#0.2
+    betha = 0.1#0.5
+    v_max = 0.8
+    w_max = 1.0
+    [error_x, error_y] = [goal_x - robot_x, goal_y - robot_y]
+    error_a = (math.atan2(error_y, error_x) - robot_a)%(2*math.pi)
+    error_d = math.sqrt(error_x**2 + error_y**2)
     if error_a > math.pi:
         error_a -= 2*math.pi
-    if error_a <= -math.pi:
-        error_a += 2*math.pi
-    v = v_max*math.exp(-error_a*error_a/alpha)
-    w = w_max*(2/(1 + math.exp(-error_a/betha)) - 1)
-    cmd_vel.linear.x = v
-    cmd_vel.angular.z= w 
+    cmd_vel.linear.x = min(v_max, error_d)*math.exp(-error_a*error_a/alpha)
+    cmd_vel.angular.z= w_max*(2/(1 + math.exp(-error_a/betha)) - 1)
 
     return cmd_vel
 
@@ -82,20 +80,20 @@ def follow_path(path):
     # Send zero speeds (otherwise, robot will keep moving after reaching last point)
     #
 
-    idx = 0
-    [local_x, local_y] = path[idx]
-    [global_x, global_y] = path[-1]
+    current_point = 0
+    [local_xg, local_yg] = path[current_point]
+    [global_xg, global_yg] = path[-1]
     [robot_x, robot_y, robot_a] = get_robot_pose(listener)
-    global_error = math.sqrt((global_x - robot_x)**2 + (global_y - robot_y)**2)
-    local_error = math.sqrt((local_x - robot_x)**2 + (local_y - robot_y)**2)
+    global_error = math.sqrt((global_xg - robot_x)**2 + (global_yg - robot_y)**2)
+    local_error = math.sqrt((local_xg - robot_x)**2 + (local_yg - robot_y)**2)
     while global_error > 0.1 and not rospy.is_shutdown():
-        pub_cmd_vel.publish(calculate_control(robot_x, robot_y, robot_a, local_x, local_y))
+        pub_cmd_vel.publish(calculate_control(robot_x, robot_y, robot_a, local_xg, local_yg))
         loop.sleep()
         [robot_x, robot_y, robot_a] = get_robot_pose(listener)
-        local_error = math.sqrt((local_x - robot_x)**2 + (local_y - robot_y)**2)
-        idx = min(idx+1, len(path)-1) if local_error < 0.3 else idx
-        [local_x, local_y] = path[idx]
-        global_error = math.sqrt((global_x - robot_x)**2 + (global_y - robot_y)**2)
+        local_error = math.sqrt((local_xg - robot_x)**2 + (local_yg - robot_y)**2)
+        current_point = min(current_point+1, len(path)) if local_error < 0.3 else current_point
+        [local_xg, local_yg] = path[current_point]
+        global_error = math.sqrt((global_xg - robot_x)**2 + (global_yg - robot_y)**2)
     pub_cmd_vel.publish(Twist())
 
     return

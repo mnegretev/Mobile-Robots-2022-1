@@ -19,7 +19,7 @@ from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker
 from sensor_msgs.msg import LaserScan
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Garcia_Martinez_ALan"
 
 listener    = None
 pub_cmd_vel = None
@@ -41,6 +41,17 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     # and return it (check online documentation for the Twist message).
     # Remember to keep error angle in the interval (-pi,pi]
     #    
+    alpha = 1.0#0.2
+    betha = 0.1#0.5
+    v_max = 0.8
+    w_max = 1.0
+    [error_x, error_y] = [goal_x - robot_x, goal_y - robot_y]
+    error_a = (math.atan2(error_y, error_x) - robot_a)%(2*math.pi)
+    error_d = math.sqrt(error_x**2 + error_y**2)
+    if error_a > math.pi:
+        error_a -= 2*math.pi
+    cmd_vel.linear.x = min(v_max, error_d)*math.exp(-error_a*error_a/alpha)
+    cmd_vel.angular.z= w_max*(2/(1 + math.exp(-error_a/betha)) - 1)
     return cmd_vel
 
 def attraction_force(robot_x, robot_y, goal_x, goal_y):
@@ -51,8 +62,11 @@ def attraction_force(robot_x, robot_y, goal_x, goal_y):
     # where force_x and force_y are the X and Y components
     # of the resulting attraction force w.r.t. map.
     #
-    
-    return [0, 0]
+    alpha = 1
+    magnitude = math.sqrt((robot_x - goal_x)**2 + (robot_y - goal_y)**2)
+    atrf_x = alpha*(robot_x - goal_x)/magnitude
+    atrf_y = alpha*(robot_y - goal_y)/magnitude
+    return [atrf_x, atrf_y]
 
 def rejection_force(robot_x, robot_y, robot_a, laser_readings):
     #
@@ -66,7 +80,19 @@ def rejection_force(robot_x, robot_y, robot_a, laser_readings):
     # where force_x and force_y are the X and Y components
     # of the resulting rejection force w.r.t. map.
     #
-    return [0, 0]
+    beta = 5.0
+    d0 = 1.0
+    sum_fx = 0.0
+    sum_fy = 0.0
+    for reading in laser_readings:
+        if reading[0] < d0:
+            total_laser_angle = robot_a + reading[1]
+            sum_fx += beta*math.sqrt(1/reading[0] - 1/d0)*(math.cos(total_laser_angle))
+            sum_fy += beta*math.sqrt(1/reading[0] - 1/d0)*(math.sin(total_laser_angle))
+
+    return [sum_fx/len(laser_readings), sum_fy/len(laser_readings)]   
+    return [force_x, force_y]
+
 
 def callback_pot_fields_goal(msg):
     goal_x = msg.pose.position.x
@@ -101,6 +127,23 @@ def callback_pot_fields_goal(msg):
     #     Update robot position by calling robot_x, robot_y, robot_a = get_robot_pose(listener)
     #     Recalculate distance to goal position
     #  Publish a zero speed (to stop robot after reaching goal point)
+    epsilon = 0.5
+    tolerance = 0.1
+    [robot_x, robot_y, robot_a] = get_robot_pose(listener)  
+    dist_to_goal = math.sqrt((goal_x - robot_x)**2 + (goal_y - robot_y)**2)
+    while dist_to_goal > tolerance and not rospy.is_shutdown():
+        [fax, fay] = attraction_force(robot_x, robot_y, goal_x, goal_y)
+        [frx, fry] = rejection_force (robot_x, robot_y, robot_a, laser_readings)
+        [fx , fy ] = [fax + frx, fay + fry]
+        [px , py ] = [robot_x - epsilon*fx, robot_y - epsilon*fy]
+        msg_cmd_vel = calculate_control(robot_x, robot_y, robot_a, px, py)
+        pub_cmd_vel.publish(msg_cmd_vel)
+        draw_force_markers(robot_x, robot_y, fax, fay, frx, fry, fx, fy, pub_markers)
+        loop.sleep()
+        [robot_x, robot_y, robot_a] = get_robot_pose(listener) 
+        dist_to_goal = math.sqrt((goal_x - robot_x)**2 + (goal_y - robot_y)**2)
+    pub_cmd_vel.publish(Twist())
+
     print("Goal point reached")
 
 def get_robot_pose(listener):
