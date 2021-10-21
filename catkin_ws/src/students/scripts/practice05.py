@@ -19,7 +19,7 @@ from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker
 from sensor_msgs.msg import LaserScan
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "GALARZA_MARTINEZ_ABEL"
 
 listener    = None
 pub_cmd_vel = None
@@ -33,14 +33,41 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     #
     # v = v_max*math.exp(-error_a*error_a/alpha)
     # w = w_max*(2/(1 + math.exp(-error_a/beta)) - 1)
-    #
+    #   # v = v_max*math.exp(-error_a*error_a/alpha)
     # where error_a is the angle error and
     # v and w are the linear and angular speeds.
     # v_max, w_max, alpha and beta, are design constants.
+    
     # Store the resulting v and w in the Twist message 'cmd_vel'
     # and return it (check online documentation for the Twist message).
     # Remember to keep error angle in the interval (-pi,pi]
-    #    
+    #
+    
+        #variables de movimiento del robot
+    v_max=1.0
+    w_max=1.0
+    
+    alpha=0.5
+    beta=0.5
+    
+    error_a=math.atan2(goal_y - robot_y, goal_x - robot_x)-robot_a
+    #condicion para el caso de detectar el error de angulo
+    #mantener angulo de 
+    if error_a > math.pi:
+    error_a-=2*math.pi
+    elif error_a < -math.pi:
+    error_a+=2*math.pi
+    
+       # v = v_max*math.exp(-error_a*error_a/alpha)
+    v= v_max * math.exp(-math.pow(error_a,2)/alpha)
+      # w = w_max*(2/(1 + math.exp(-error_a/beta)) - 1)
+    w= w_max * (2/(1+math.exp(-error_a/beta))-1)
+    
+    
+    cmd_vel.linear.x=v
+    #Velocidad angular en z
+    cmd_vel.angular.z=w
+    
     return cmd_vel
 
 def attraction_force(robot_x, robot_y, goal_x, goal_y):
