@@ -17,7 +17,7 @@
 #include "geometry_msgs/Pose2D.h"
 #include "tf/transform_broadcaster.h"
 
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#define NOMBRE "MURRIETA VILLEGAS"
 
 #define LASER_DOWNSAMPLING  10
 #define SENSOR_NOISE        0.1
@@ -36,17 +36,21 @@ geometry_msgs::PoseArray get_initial_distribution(int N, float min_x, float max_
     particles.poses.resize(N);
     particles.header.frame_id = "map";
 
-    /*
-     * TODO:
-     *
-     * Generate a set of N particles (each particle represented by a Pose message)
-     * with positions uniformly distributed within bounding box given by min_x, ..., max_a.
-     * The set of particles must be a PoseArray message.
-     * To generate uniformly distributed random numbers, you can use the funcion rnd.uniformReal(min, max)
-     * Remember that orientation in a Pose message is represented by a quaternion (x,y,z,w)
-     * For the Euler angles (roll, pitch, yaw) = (0,0,theta) the corresponding quaternion is
-     * given by (0,0,sin(theta/2), cos(theta/2)). 
-     */
+    for(int i=0; i<N; i++){
+        //Generate a set of N particles (each particle represented by a Pose message)
+        //with positions uniformly distributed within bounding box given by min_x, ..., max_a.
+        particles.poses[i].position.x=rnd.uniformReal(min_x,max_x);
+        particles.poses[i].position.y=rnd.uniformReal(min_y,max_y);
+
+        //To generate uniformly distributed random numbers, you can use the funcion rnd.uniformReal(min, max)
+        float theta=rnd.uniformReal(min_a,max_a);
+
+        // given by (0,0,sin(theta/2), cos(theta/2)). 
+        particles.poses[i].orientation.w=cos(theta/2);
+        particles.poses[i].orientation.z=sin(theta/2);
+      
+    }
+
     return particles;
 }
 
@@ -82,6 +86,7 @@ geometry_msgs::PoseArray resample_particles(geometry_msgs::PoseArray& particles,
 void move_particles(geometry_msgs::PoseArray& particles, float delta_x, float delta_y, float delta_t)
 {
     random_numbers::RandomNumberGenerator rnd;
+    float a;
     /*
      * TODO:
      *
@@ -91,6 +96,19 @@ void move_particles(geometry_msgs::PoseArray& particles, float delta_x, float de
      * is the orientation of the i-th particle.
      * Add gaussian noise to each new position. Use MOVEMENT_NOISE as covariances. 
      */
+
+    for(int i=0;i<particles.poses.size();i++){
+        
+        a = atan2(particles.poses[i].orientation.z,particles.poses[i].orientation.w)*2;
+        particles.poses[i].position.x += delta_x*cos(a) - delta_y*sin(a) + rnd.gaussian(0,MOVEMENT_NOISE);
+        particles.poses[i].position.y += delta_x*sin(a) + delta_y*cos(a) + rnd.gaussian(0,MOVEMENT_NOISE);
+        a += delta_t+rnd.gaussian(0,MOVEMENT_NOISE);
+
+        particles.poses[i].orientation.w = cos(a/2);
+        particles.poses[i].orientation.z = sin(a/2);
+
+     }
+
 }
 
 bool check_displacement(geometry_msgs::Pose2D& robot_pose, geometry_msgs::Pose2D& delta_pose)
@@ -155,7 +173,7 @@ tf::Transform get_map_to_odom_transform(geometry_msgs::Pose2D odom, geometry_msg
 
 int main(int argc, char** argv)
 {
-    std::cout << "PRACTICE 06 - " << NOMBRE << std::endl;
+    std::cout << "PRACTICE 06 - " << "Murrieta Villegas" << std::endl;
     ros::init(argc, argv, "practice06");
     ros::NodeHandle n("~");
     ros::Rate loop(20);
@@ -228,12 +246,10 @@ int main(int argc, char** argv)
         if(check_displacement(robot_odom, delta_pose))
         {
             std::cout << "Displacement detected. Updating pose estimation..." << std::endl;
-            /*
-             * TODO:
+            /* TODO:
              * Move all particles a displacement given by delta_pose (call 'move_particles' function).
-             * Check online documentation of Pose2D message. 
              */
-
+            move_particles(particles, delta_pose.x, delta_pose.y, delta_pose.theta);
             pub_particles.publish(particles);
             map_to_odom_transform = get_map_to_odom_transform(robot_odom, get_robot_pose_estimation(particles));
         }
