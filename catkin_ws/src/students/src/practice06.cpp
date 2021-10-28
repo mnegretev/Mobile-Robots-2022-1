@@ -17,7 +17,7 @@
 #include "geometry_msgs/Pose2D.h"
 #include "tf/transform_broadcaster.h"
 
-#define NOMBRE "Manzo Soto Jorge Luis"
+#define NOMBRE "Manzo_Soto_Jorge_Luis"
 #define LASER_DOWNSAMPLING  10
 #define SENSOR_NOISE        0.1
 #define RESAMPLING_NOISE    0.1
