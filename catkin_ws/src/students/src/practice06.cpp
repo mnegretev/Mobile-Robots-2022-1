@@ -253,7 +253,7 @@ int main(int argc, char** argv)
              * Move all particles a displacement given by delta_pose (call 'move_particles' function).
              * Check online documentation of Pose2D message. 
              */
-
+            move_particles(particles, delta_pose.x, delta_pose.y, delta_pose.theta);
             pub_particles.publish(particles);
             map_to_odom_transform = get_map_to_odom_transform(robot_odom, get_robot_pose_estimation(particles));
         }
