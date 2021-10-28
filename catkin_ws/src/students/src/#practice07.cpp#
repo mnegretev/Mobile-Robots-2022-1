@@ -1,6 +1,6 @@
 /*
  * AUTONOMOUS MOBILE ROBOTS - UNAM, FI, 2022-1
- * PRACTICE 6 - LOCALIZATION BY PARTICLE FILTERS - PART I
+ * PRACTICE 7 - LOCALIZATION BY PARTICLE FILTERS - PART II
  *
  * Instructions:
  * Write the code necessary to implement localization by particle filters.
@@ -17,7 +17,7 @@
 #include "geometry_msgs/Pose2D.h"
 #include "tf/transform_broadcaster.h"
 
-#define NOMBRE "Herrejo Ramirez Osvaldo"
+#define NOMBRE "APELLIDO_PATERNO_APELLDO_MATERNO"
 
 #define LASER_DOWNSAMPLING  10
 #define SENSOR_NOISE        0.1
@@ -47,15 +47,7 @@ geometry_msgs::PoseArray get_initial_distribution(int N, float min_x, float max_
      * For the Euler angles (roll, pitch, yaw) = (0,0,theta) the corresponding quaternion is
      * given by (0,0,sin(theta/2), cos(theta/2)). 
      */
-    for (size_t i=0; i<N; i++)
-    {
-        particles.poses[i].Position.x = rnd.uniformReal(min_x, max_x);
-        particles.poses[i].Position.y = rnd.uniformReal(min_a, max_a);
-        float theta = rnd.uniformReal(min_a, max_a);
-        particles.poses[i].orientation.w = cos(theta/2);
-        particles.poses[i].orientation.z = sen(theta/2);
-
-    }
+    
     return particles;
 }
 
@@ -63,19 +55,51 @@ std::vector<sensor_msgs::LaserScan> simulate_particle_scans(geometry_msgs::PoseA
 {
     std::vector<sensor_msgs::LaserScan> simulated_scans;
     simulated_scans.resize(particles.poses.size());
-    return simulated_scans;
+    /*
+     * TODO:
+     *
+     * Simulate a laser scan for each particle given the set of particles and a static map. 
+     * Store the simulated scans in 'simulated_scans'.
+     * You can use the function occupancy_grid_utils::simulateRangeScan(map, pose, info).
+     * Check online documentation
+     * http://docs.ros.org/groovy/api/occupancy_grid_utils/html/namespaceoccupancy__grid__utils.html
+     * Use the variable 'real_sensor_info' (already declared as global variable) for the real sensor information
+     */
 }
 
 std::vector<float> calculate_particle_weights(std::vector<sensor_msgs::LaserScan>& simulated_scans, sensor_msgs::LaserScan& real_scan)
 {
     std::vector<float> weights;
     weights.resize(simulated_scans.size());
+    /*
+     * TODO:
+     *
+     * For each particle, calculate a weight indicating the similarity between its simulated scan and the real scan.
+     * Normalize all weights (the sum of all values must always be 1.0)
+     * Store results in 'weights'.
+     * IMPORTANT. The real sensor scans are DOWNSAMPLED. i.e., only 1 out of LASER_DOWNSAMPLING scans is considered.
+     * Example, if LASER_DOWNSAMPLING=10 and real sensor has 500 ranges, simulated scans will only have 50 ranges
+     * When comparing readings, for each reading in the simulated scan, you should skip LASER_DOWNSAMPLING readings
+     * in the real sensor.
+     * IMPORTANT NOTE 2. Both, simulated an real scans, can have infinite ranges. Thus, when comparing readings,
+     * ensure both simulated and real ranges are finite values. 
+     */
+    
     return weights;
 }
 
 int random_choice(std::vector<float>& weights)
 {
     random_numbers::RandomNumberGenerator rnd;
+    
+    /*
+     * TODO:
+     *
+     * Write an algorithm to choice an integer in the range [0, N-1], with N, the size of 'weights'.
+     * Probability of picking an integer 'i' is given by the corresponding weights[i] value.
+     * Return the chosen integer. 
+     */
+    
     return -1;
 }
 
@@ -85,6 +109,19 @@ geometry_msgs::PoseArray resample_particles(geometry_msgs::PoseArray& particles,
     geometry_msgs::PoseArray resampled_particles;
     resampled_particles.header.frame_id = "map";
     resampled_particles.poses.resize(particles.poses.size());
+    /*
+     * TODO:
+     *
+     * Sample, with replacement, N particles from the set 'particles'.
+     * The probability of the i-th particle of being resampled is given by weights[i].
+     * Use the random_choice function to pick a particle with the correct probability.
+     * Add gaussian noise to each sampled particle (add noise to x,y and theta).
+     * Use RESAMPLING_NOISE as noise variance.
+     * Return the set of new particles.
+     * IMPORTANT NOTE. Remember the orientation (roll, pitch, yaw) = (0,0,theta) is
+     * given by the quaternion (0,0,sin(theta/2), cos(theta/2)), thus, you should first
+     * get the corresponding angle, then add noise, and the get again the corresponding quaternion.
+     */
     return resampled_particles;
 }
 
@@ -100,17 +137,6 @@ void move_particles(geometry_msgs::PoseArray& particles, float delta_x, float de
      * is the orientation of the i-th particle.
      * Add gaussian noise to each new position. Use MOVEMENT_NOISE as covariances. 
      */
-
-    for(size_t i=0; i<particles.poses.size(); i++)
-    {
-        float a = atan2(particles.poses[i].orientation.z, particles.poses[i].orientation.w)*2;
-        particles.poses[i].position.x += delta_x*cos(a) - delta_y*sin(a) + rnd.gaussian(0, MOVEMENT_NOISE);
-        particles.poses[i].position.y += delta_x*sin(a) + delta_y*cos(a) + rnd.gaussian(0, MOVEMENT_NOISE);
-        a += delta_t + rnd.gaussian(0, MOVEMENT_NOISE);
-        particles.poses[i].orientation.w = cos(a/2);
-        particles.poses[i].orientation.z = sin(a/2);
-    }
-
 }
 
 bool check_displacement(geometry_msgs::Pose2D& robot_pose, geometry_msgs::Pose2D& delta_pose)
@@ -136,10 +162,17 @@ geometry_msgs::Pose2D get_robot_odometry(tf::TransformListener& listener)
 {
     tf::StampedTransform t;
     geometry_msgs::Pose2D pose;
-    listener.lookupTransform("odom", "base_link", ros::Time(0), t);
-    pose.x = t.getOrigin().x();
-    pose.y = t.getOrigin().y();
-    pose.theta = atan2(t.getRotation().z(), t.getRotation().w())*2;
+    try{
+        listener.lookupTransform("odom", "base_link", ros::Time(0), t);
+        pose.x = t.getOrigin().x();
+        pose.y = t.getOrigin().y();
+        pose.theta = atan2(t.getRotation().z(), t.getRotation().w())*2;
+    }
+    catch(std::exception &e){
+        pose.x = 0;
+        pose.y = 0;
+        pose.theta = 0;
+    }
     return pose;
 }
 
@@ -168,15 +201,15 @@ void callback_laser_scan(const sensor_msgs::LaserScan::ConstPtr& msg){real_scan 
 
 tf::Transform get_map_to_odom_transform(geometry_msgs::Pose2D odom, geometry_msgs::Pose2D loc)
 {
-    tf::Transform odom_to_base(tf::Quaternion(0,0,sin(odom.theta/2),cos(odom.theta/2)), tf::Vector3(odom.x,odom.y,0));
-    tf::Transform map_to_base(tf::Quaternion(0,0,sin(loc.theta/2),cos(loc.theta/2)), tf::Vector3(loc.x, loc.y, 0));
+    tf::Transform odom_to_base(tf::Quaternion(0,0,sin(odom.theta/2),cos(odom.theta/2)),tf::Vector3(odom.x,odom.y,0));
+    tf::Transform map_to_base(tf::Quaternion(0,0,sin(loc.theta/2),cos(loc.theta/2)),tf::Vector3(loc.x, loc.y, 0));
     return map_to_base*odom_to_base.inverse();
 }
 
 int main(int argc, char** argv)
 {
-    std::cout << "PRACTICE 06 - " << NOMBRE << std::endl;
-    ros::init(argc, argv, "practice06");
+    std::cout << "PRACTICE 07 - " << NOMBRE << std::endl;
+    ros::init(argc, argv, "practice07");
     ros::NodeHandle n("~");
     ros::Rate loop(20);
     ros::Subscriber sub_scan      = n.subscribe("/scan", 1, callback_laser_scan);
@@ -215,16 +248,17 @@ int main(int argc, char** argv)
     geometry_msgs::PoseArray particles;                   //A set of N particles
     nav_msgs::OccupancyGrid static_map;                   //A static map
     std::vector<sensor_msgs::LaserScan> simulated_scans;  //A set of simulated laser readings, one scan per particle
-    std::vector<float> particle_weights;  //A set of weights for each particle
-    geometry_msgs::Pose2D robot_odom;     //Position estimated by the odometry
-    geometry_msgs::Pose2D delta_pose;     //Displacement since last pose estimation
-    geometry_msgs::Pose2D robot_pose;     //Estimated robot position with respect to map
-    tf::Transform map_to_odom_transform;  //Transform from map to odom frame (which corrects odometry estimation)
+    std::vector<float> particle_weights;//A set of weights for each particle
+    geometry_msgs::Pose2D robot_odom;   //Position estimated by the odometry
+    geometry_msgs::Pose2D delta_pose;   //Displacement since last pose estimation
+    geometry_msgs::Pose2D robot_pose;   //Estimated robot position with respect to map
+    tf::Transform map_to_odom_transform;//Transformation from map to odom frame (which corrects odometry estimation)
 
     /*
      * Sentences for getting the static map, info about real lidar sensor,
      * and initialization of corresponding arrays.
      */
+    ros::service::waitForService("/static_map", ros::Duration(20));
     ros::service::call("/static_map", srv_get_map);
     static_map = srv_get_map.response.map;
     real_scan = *ros::topic::waitForMessage<sensor_msgs::LaserScan>("/scan");
@@ -236,7 +270,6 @@ int main(int argc, char** argv)
     std::cout << "Scan downsampling: " << LASER_DOWNSAMPLING << std::endl;
 
     particles = get_initial_distribution(number_of_particles, init_min_x, init_max_x, init_min_y, init_max_y, init_min_a, init_max_a);
-    
     robot_pose = get_robot_pose_estimation(particles);
     robot_odom = get_robot_odometry(listener);
     map_to_odom_transform = get_map_to_odom_transform(robot_odom, robot_pose);
@@ -251,9 +284,11 @@ int main(int argc, char** argv)
             /*
              * TODO:
              * Move all particles a displacement given by delta_pose (call 'move_particles' function).
-             * Check online documentation of Pose2D message. 
+             * Get the set of simulated scans for each particles. Use the simulate_particle_scans function.
+             * Get the set of weights by calling the calculate_particle_weights function
+             * Resample particles by calling the resample_particles function
              */
-
+            
             pub_particles.publish(particles);
             map_to_odom_transform = get_map_to_odom_transform(robot_odom, get_robot_pose_estimation(particles));
         }
