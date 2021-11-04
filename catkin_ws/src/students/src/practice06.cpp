@@ -114,8 +114,8 @@ void move_particles(geometry_msgs::PoseArray& particles, float delta_x, float de
         particles.poses[i].position.y += sin(angle) * delta_x + cos(angle) * delta_y + rnd.gaussian(0, MOVEMENT_NOISE);
         angle += delta_t + rnd.gaussian(0, MOVEMENT_NOISE);
         // Back to quaternion
-        particles.poses[i].orientation.w = cos(angle)/2;
-        particles.poses[i].orientation.z = sin(angle)/2;
+        particles.poses[i].orientation.w = cos(angle/2);
+        particles.poses[i].orientation.z = sin(angle/2);
     }
 
 }
