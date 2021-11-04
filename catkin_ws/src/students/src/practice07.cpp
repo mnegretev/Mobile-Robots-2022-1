@@ -76,6 +76,11 @@ std::vector<sensor_msgs::LaserScan> simulate_particle_scans(geometry_msgs::PoseA
      * http://docs.ros.org/groovy/api/occupancy_grid_utils/html/namespaceoccupancy__grid__utils.html
      * Use the variable 'real_sensor_info' (already declared as global variable) for the real sensor information
      */
+    for(int i=0;i<particles.poses.size();i++){
+        simulated_scans[i]=*occupancy_grid_utils::simulateRangeScan(map,particles.poses[i],real_sensor_info);
+    }
+    return simulated_scans;    
+    
 }
 
 std::vector<float> calculate_particle_weights(std::vector<sensor_msgs::LaserScan>& simulated_scans, sensor_msgs::LaserScan& real_scan)
@@ -96,6 +101,27 @@ std::vector<float> calculate_particle_weights(std::vector<sensor_msgs::LaserScan
      * ensure both simulated and real ranges are finite values. 
      */
     
+    double weights_sum=0;
+    for(size_t i=0; i< simulated_scans.size();i++){
+        weights[i]=0;
+        for(size_t j=0; j<simulated_scans[i].ranges.size();j++){
+            if(simulated_scans[i].ranges[j]>real_scan.range_max && real_scan.ranges[j*LASER_DOWNSAMPLING]<real_scan.range_max){
+                weights[i] += fabs(simulated_scans[i].ranges[j] - real_scan.ranges[j*LASER_DOWNSAMPLING]);
+              }
+              else{
+                   weights[i]+= real_scan.range_max;
+                  }
+     
+    weights[i]/=simulated_scans[i].ranges.size(); //sacando el promedio total de particulas 
+    weights[i]=exp(-weights[i]*weights[i]/SENSOR_NOISE);
+    weights_sum+=weights[i];
+        }
+    }
+    
+    for(size_t i=0; i<weights.size();i++){ // suma de todos los pesos
+       weights[i]/=weights_sum; 
+    } 
+        
     return weights;
 }
 
@@ -110,7 +136,13 @@ int random_choice(std::vector<float>& weights)
      * Probability of picking an integer 'i' is given by the corresponding weights[i] value.
      * Return the chosen integer. 
      */
-    
+    float random=rnd.uniformReal(0,1);
+    for(size_t i=0; i< weights.size(); i++){
+        if(random<weights[i])
+            return i;
+        else
+            random-=weights[i];
+    }    
     return -1;
 }
 
@@ -133,6 +165,20 @@ geometry_msgs::PoseArray resample_particles(geometry_msgs::PoseArray& particles,
      * given by the quaternion (0,0,sin(theta/2), cos(theta/2)), thus, you should first
      * get the corresponding angle, then add noise, and the get again the corresponding quaternion.
      */
+       for(size_t i=0; i<particles.poses.size();i++)
+    {
+      int idx = random_choice(weights); // para x y y
+      resampled_particles.poses[i] = particles.poses[idx];
+      resampled_particles.poses[i].position.x += rnd.gaussian(0,RESAMPLING_NOISE);
+      resampled_particles.poses[i].position.y += rnd.gaussian(0,RESAMPLING_NOISE); 
+    
+     float angle = atan2(particles.poses[idx].orientation.z,particles.poses[idx].orientation.w)*2;
+           
+      angle+=rnd.gaussian(0,RESAMPLING_NOISE);
+      resampled_particles.poses[i].orientation.w=cos(angle/2);
+      resampled_particles.poses[i].orientation.z=sin(angle/2);     
+     
+    }      
     return resampled_particles;
 }
 
@@ -309,6 +355,11 @@ int main(int argc, char** argv)
              * Get the set of weights by calling the calculate_particle_weights function
              * Resample particles by calling the resample_particles function
              */
+            move_particles(particles,delta_pose.x,delta_pose.y,delta_pose.theta);
+            simulated_scans=simulate_particle_scans(particles,static_map);
+            particle_weights=calculate_particle_weights(simulated_scans,real_scan);
+            particles=resample_particles(particles,particle_weights);
+            
             
             pub_particles.publish(particles);
             map_to_odom_transform = get_map_to_odom_transform(robot_odom, get_robot_pose_estimation(particles));
