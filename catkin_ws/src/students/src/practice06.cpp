@@ -109,6 +109,7 @@ void move_particles(geometry_msgs::PoseArray& particles, float delta_x, float de
         a += delta_t + rnd.gaussian(0, MOVEMENT_NOISE);
         particles.poses[i].orientation.w = cos(a/2);
         particles.poses[i].orientation.z = sin(a/2);
+    }
 }
 
 bool check_displacement(geometry_msgs::Pose2D& robot_pose, geometry_msgs::Pose2D& delta_pose)
