@@ -138,13 +138,14 @@ int random_choice(std::vector<float>& weights)
     {
     	if (rn <weights[i])
 	{
-	return -1;
+	return i;
 	}
 	else
 	{
 	rn -= weights[i];
 	}
     }
+   // return -1;
 }
 
 geometry_msgs::PoseArray resample_particles(geometry_msgs::PoseArray& particles, std::vector<float>& weights)
@@ -198,8 +199,8 @@ void move_particles(geometry_msgs::PoseArray& particles, float delta_x, float de
         particles.poses[i].position.x += delta_x*cos(angle)-delta_y*sin(angle) + rnd.gaussian(0,MOVEMENT_NOISE);
         particles.poses[i].position.y += delta_x*sin(angle)-delta_y*cos(angle) +rnd.gaussian(0,MOVEMENT_NOISE);
         angle += delta_t + rnd.gaussian(0,MOVEMENT_NOISE);
-        particles.poses[i].orientation.z = cos(angle/2);
-        particles.poses[i].orientation.w = sin(angle/2);
+        particles.poses[i].orientation.z = sin(angle/2);
+        particles.poses[i].orientation.w = cos(angle/2);
     }
 
 }
