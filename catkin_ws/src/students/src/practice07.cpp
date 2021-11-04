@@ -17,7 +17,7 @@
 #include "geometry_msgs/Pose2D.h"
 #include "tf/transform_broadcaster.h"
 
-#define NOMBRE "CRISTOVAL HUERTA JOSE FERNANDO"
+#define NOMBRE "CRISTOVAL_HUERTA_JOSE_FERNANDO"
 
 #define LASER_DOWNSAMPLING  10
 #define SENSOR_NOISE        0.1
