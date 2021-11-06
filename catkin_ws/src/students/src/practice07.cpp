@@ -49,11 +49,12 @@ geometry_msgs::PoseArray get_initial_distribution(int N, float min_x, float max_
      */
     for (size_t i=0; i<N; i++)
     {
-        particles.poses[i].Position.x = rnd.uniformReal(min_x, max_x);
-        particles.poses[i].Position.y = rnd.uniformReal(min_y, max_y);
-        float theta = rnd.uniformReal(min_a, max_a);
-        particles.poses[i].orientation.w = cos(theta/2);
-        particles.poses[i].orientation.z = sin(theta/2);
+        float a = atan2(particles.poses[i].orientation.z, particles.poses[i].orientation.w)*2;
+        particles.poses[i].Position.x += delta_x*cos(a) - delta_y*sin(a) + rnd.gaussian(0, MOVEMENT_NOISE);
+        particles.poses[i].Position.y += delta_x*sin(a) + delta_y*cos(a) + rnd.gaussian(0, MOVEMENT_NOISE);
+        a += delta_t + rnd.gaussian()0, MOVEMENT_NOISE;
+        particles.poses[i].orientation.w = cos(a/2);
+        particles.poses[i].orientation.z = sin(a/2);
     }
     return particles;
 }
