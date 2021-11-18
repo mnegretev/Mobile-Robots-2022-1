@@ -17,7 +17,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PointStamped, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "CADENA CAMPOS"
 
 def segment_by_color(img_bgr, points):
     #
@@ -33,8 +33,29 @@ def segment_by_color(img_bgr, points):
     #   Example: 'points[240,320][1]' gets the 'y' value of the point corresponding to
     #   the pixel in the center of the image.
     #
-    return [0,0,0,0,0]
+    # RGB ---> HSV
+    img_hsv=cv2.cvtColor(img_bgr,cv2.COLOR_BGR2HSV)
+    #Detectar los colores 
+    img_bin=cv2.inRange(img_hsv,numpy.array([25,200,50]),numpy.array([32,255,255]))
+    #Calcular el centroide 
+    indice=cv2.findNonZero(img_bin)
+    coordenadas=cv2.mean(indice)
+    [x,y,z,cuenta] = [0,0,0,0]
+    for [[c,r]] in indice:
+        px=points[r,c][0]
+        py=points[r,c][1]
+        pz=points[r,c][2]
+        if math.isnan(px) or math.isnan(py) or math.isnan(pz):
+          continue
+        [x,y,z,cuenta] = [x+px,y+py,z+pz,cuenta+1]
 
+    if cuenta>0:
+        x=x/cuenta
+        y=y/cuenta
+        z=z/cuenta
+    else:
+        x,y,z=0,0,0
+    return [coordenadas[0],coordenadas[1],x,y,z]
 def callback_point_cloud(msg):
     global pub_point
     arr = ros_numpy.point_cloud2.pointcloud2_to_array(msg)
@@ -62,4 +83,3 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
-
