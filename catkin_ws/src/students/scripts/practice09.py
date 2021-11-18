@@ -17,7 +17,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PointStamped, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "GALARZA_MARTINEZ_ABEL"
 
 def segment_by_color(img_bgr, points):
     #
@@ -33,6 +33,31 @@ def segment_by_color(img_bgr, points):
     #   Example: 'points[240,320][1]' gets the 'y' value of the point corresponding to
     #   the pixel in the center of the image.
     #
+    
+    img_hsv=cv2.cvtColor(img_bgr,cv2.COLOR_BGR2HSV) #Cambiar de RGB a HSV--> funcion  cv2.cvtColor
+    img_bin=cv2.inRange(img_hsv, numpy.array([25,200,50]),numpy.array([35,255,255])) #para determinar el color que ets ane el rango del circulo
+   
+    idn= cv2.findNonZero(img_bin) #calculo de centroide de todos los pixeles para definir la posicion de la bola
+    cds= cv2.mean(ind)
+    [x,y,z,cont]=[0,0,0,0]
+    
+    
+    for[[c,r]] in ind:
+	x1=points[r,c][0]
+	y1=points[r,c][1]
+	z1=points[r,c][2]
+	if math.isnan(x1) or math.isnan(y1) or math.isnan(z1):
+		continue
+	[x,y,z,cont] = [x1+x, y1+y, z1+z,cont+1]
+    
+    if cont>0:
+    x = x/cont
+	y = y/cont
+	z = z/cont
+    else: 
+	x,y,z=0,0,0
+    
+
     return [0,0,0,0,0]
 
 def callback_point_cloud(msg):
