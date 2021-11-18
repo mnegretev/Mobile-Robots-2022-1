@@ -17,7 +17,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PointStamped, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "VARILLA_MEJIA"
 
 def segment_by_color(img_bgr, points):
     #
@@ -33,7 +33,25 @@ def segment_by_color(img_bgr, points):
     #   Example: 'points[240,320][1]' gets the 'y' value of the point corresponding to
     #   the pixel in the center of the image.
     #
-    return [0,0,0,0,0]
+    img_hsv= cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+    img_bin= cv2.inRange(img_hsv, numpy.array([(25, 200,50)], numpy.array([35,255,255])))
+    indices = cv2.findNonZero(img_bin)
+    coord = cv2.mean(indices)
+    [img_x, img_y, a, b] = cv2.mean(indices)
+    print([img_x, img_y])
+
+    [x, y, z, cnt] = [0, 0, 0, 0]
+    for [[c, r]] in indices:
+        xt = points[r,c][0]
+        yt = points[r,c][1]
+        zt = points[r,c][2]
+        if math.isnan(xt) or math.isnan(yt) or math.isnan(zt):
+            continue
+        [x, y, z, cnt] = [x+points[r,c][0], y+points[r,c][1], z+points[r,c], cnt+1]
+    x = x/len(indices) if cnt>0 else 0
+    y = y/len(indices) if cnt>0 else 0
+    z = z/len(indices) if cnt>0 else 0
+    return [img_x,img_y,x,y,z]
 
 def callback_point_cloud(msg):
     global pub_point
