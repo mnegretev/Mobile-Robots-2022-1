@@ -17,7 +17,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PointStamped, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Ramirez_Castanon_Jorge_Francisco"
 
 def segment_by_color(img_bgr, points):
     #
@@ -25,15 +25,45 @@ def segment_by_color(img_bgr, points):
     # - Change color space from RGB to HSV.
     #   Check online documentation for cv2.cvtColor function
     # - Determine the pixels whose color is in the color range of the ball.
+    
+    # Pasamos el espacio de color a HSV
+    img_hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+
     #   Check online documentation for cv2.inRange
+
+    # Aplicamos un filtro en amarillo al poner limites (color, saturacion e iluminacion)
+    img_bin=cv2.inRange(img_hsv, numpy.array([25,200,50]),numpy.array([35,255,255]))
+
     # - Calculate the centroid of all pixels in the given color range (ball position).
     #   Check online documentation for cv2.findNonZero and cv2.mean
+
+    INDICE= cv2.findNonZero(img_bin)
+    COORDENADASXY= cv2.mean(INDICE)
+    [x,y,z,count]=[0,0,0,0]
+
     # - Calculate the centroid of the segmented region in the cartesian space
     #   using the point cloud 'points'. Use numpy array notation to process the point cloud data.
     #   Example: 'points[240,320][1]' gets the 'y' value of the point corresponding to
     #   the pixel in the center of the image.
     #
-    return [0,0,0,0,0]
+    
+    for [[c,r]] in INDICE:
+        auxx = points[r,c][0]
+        auxy = points[r,c][1]
+        auxz = points[r,c][2]
+        if math.isnan(auxx) or math.isnan(auxy) or math.isnan(auxz):
+            continue
+        [x,y,z,count]=[x+auxx, y+auxy, z+auxz, count+1]
+
+    if count>0:
+      x = x/count
+      y = y/count
+      z = z/count
+    else:
+      x = 0
+      y = 0
+      z = 0
+    return [COORDENADASXY[0],COORDENADASXY[1],x,y,z]
 
 def callback_point_cloud(msg):
     global pub_point
