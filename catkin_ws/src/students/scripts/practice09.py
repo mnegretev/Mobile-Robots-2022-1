@@ -17,7 +17,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PointStamped, Point
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Juarez Castillo"
 
 def segment_by_color(img_bgr, points):
     #
@@ -33,7 +33,26 @@ def segment_by_color(img_bgr, points):
     #   Example: 'points[240,320][1]' gets the 'y' value of the point corresponding to
     #   the pixel in the center of the image.
     #
-    return [0,0,0,0,0]
+
+    img_hsv=cv2.cvtColor(img_bgr,cv2.COLOR_BGR2HSV)
+    img_bin=cv2.inRange(img_hsv,numpy.array([25,200,50]),numpy.array([35,255,255]))
+    index=cv2.findNonZero(img_bin)
+    mean_coords=cv2.mean(index)
+
+    x,y,z=0,0,0
+    for [[col,ren]] in index:
+        if math.isnan(points[ren,col][0]) or math.isnan(points[ren,col][1]) or math.isnan(points[ren,col][2]):
+            x,y,z=x,y,z
+        else:    
+            x+=points[ren,col][0]
+            z+=points[ren,col][1]
+            x+=points[ren,col][2]
+            
+    x,y,z=x/len(index), y/len(index), z/len(index)
+
+        
+            
+    return [mean_coords[0],mean_coords[1],0,0,0]
 
 def callback_point_cloud(msg):
     global pub_point
@@ -51,7 +70,7 @@ def callback_point_cloud(msg):
 
 def main():
     global pub_point
-    print "PRACTICE 09 - " + NAME
+    print ("PRACTICE 09 - " + NAME)
     rospy.init_node("practice09")
     rospy.Subscriber("/kinect/points", PointCloud2, callback_point_cloud)
     pub_point = rospy.Publisher('/detected_object', PointStamped, queue_size=10)
