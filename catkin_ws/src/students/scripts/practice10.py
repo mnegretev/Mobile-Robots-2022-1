@@ -20,6 +20,8 @@ from geometry_msgs.msg import PointStamped
 from custom_msgs.msg import ArmConfiguration
 from custom_msgs.srv import *
 
+NAME = "ARREDONDO_ZARATE_ROMAN"
+
 def get_model_info():
     global joints, transforms
     robot_model = urdf_parser_py.urdf.URDF.from_parameter_server()
@@ -62,10 +64,15 @@ def forward_kinematics(q, Ti, Wi):
     #     Check online documentation of these functions:
     #     http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
     #
-    
-    x,y,z = 0,0,0  # Get xyz from resulting H
-    R,P,Y = 0,0,0  # Get RPY from resulting H
-    return numpy.asarray([x,y,z,R,P,Y])
+    H = tft.identity_matrix()
+    for qi in len(q):
+        H = tft.concatenate_matrices(H, Ti[i], tft.rotation_matrix(q[i], Wi[i]))
+    H = tft.concatenate_matrices(H, Ti[7])
+
+
+    x, y, z = H[0][3], H[1][3], H[2][3]  # Get xyz from resulting H
+    R, P, Y = tft.euler_from_matrix(H, 'rxyz')  # Get RPY from resulting H
+    return numpy.asarray([x, y, z, R, P, Y])
 
 def jacobian(q, Ti, Wi):
     delta_q = 0.000001
@@ -94,7 +101,10 @@ def jacobian(q, Ti, Wi):
     J = numpy.asarray([[0.0 for a in q] for i in range(6)])            # J 6x7 full of zeros
     qn = numpy.asarray([q,]*len(q)) + delta_q*numpy.identity(len(q))   # q_next as indicated above
     qp = numpy.asarray([q,]*len(q)) - delta_q*numpy.identity(len(q))   # q_prev as indicated above
-    
+
+    for i in range(1, 8): # Goes from 1 to 7
+        J[:, i] = (forward_kinematics(qn[i], Ti, Wi) - forward_kinematics(qp[i], Ti, Wi)) / (2 * delta_q)
+        
     return J
 
 def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
@@ -126,6 +136,41 @@ def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
     #    Return calculated q if maximum iterations were not exceeded
     #    Otherwise, return None
     #
+
+    p = forward_kinematics(q, Ti, Wi)
+
+    error = p - pd
+
+    if error > math.pi:
+        error -= math.pi * 2
+    elif error < -math.pi:
+        error += math.pi * 2
+
+    while error > tolerance and iterations < max_iterations:
+
+        J = jacobian(q, Ti, Wi)
+
+        q = q - numpy.dot(numpy.linalg.pinv(J), error)
+
+        for i in range(len(q)):
+            if q[i] > math.pi:
+                q[i] -= math.pi * 2
+            elif q[i] < -math.pi:
+                q[i] += math.pi * 2
+
+        p = forward_kinematics(q, Ti, Wi)
+
+        error = p - pd
+
+        if error > math.pi:
+            error -= math.pi * 2
+        elif error < -math.pi:
+            error += math.pi * 2
+
+        iterations += 1
+
+    if iterations <= max_iterations:
+        return q
     
     return None
 
@@ -170,6 +215,7 @@ def callback_ra_fk(req):
     return resp
 
 def main():
+    print "PRACTICE 10 - " + NAME
     print("INITIALIZING INVERSE KINEMATIC NODE BY MARCOSOFT...")
     rospy.init_node("ik_geometric")
     get_model_info()
@@ -181,5 +227,5 @@ def main():
     while not rospy.is_shutdown():
         loop.sleep()
 
-if __name__ == '__main__':
+if _name_ == 'main':
     main()
