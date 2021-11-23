@@ -26,8 +26,16 @@ def callback_scan(msg):
     return
 
 def main():
+<<<<<<< HEAD
     print("PRACTICE 00 - " + NAME)
     rospy.init_node("practice00") #Establece comunicacion con el nodo master
+||||||| merged common ancestors
+    print "PRACTICE 00 - " + NAME
+    rospy.init_node("practice00")
+=======
+    print("PRACTICE 00 - " + NAME)
+    rospy.init_node("practice00")
+>>>>>>> ae18a7adb2709badab15f133f058604ef5046c27
     rospy.Subscriber("/scan", LaserScan, callback_scan)
     pub_cmd_vel = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
     loop = rospy.Rate(10)
