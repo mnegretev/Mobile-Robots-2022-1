@@ -140,7 +140,7 @@ def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
     p=forward_kinematics(q,Ti,Wi)
     error=p-pd
 
-    while error > tolerance and iterations < max_iterations
+    while error > tolerance and iterations < max_iterations:
         for i in range(len(error)):
             if error[i]>math.pi:
                 error[i]-=math.pi*2
