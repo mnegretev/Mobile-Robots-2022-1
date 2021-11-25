@@ -215,7 +215,7 @@ def callback_ra_fk(req):
     return resp
 
 def main():
-    print "PRACTICE 09 - " + NAME
+    print "PRACTICE 10 - " + NAME
     print("INITIALIZING INVERSE KINEMATIC NODE BY MARCOSOFT...")
     rospy.init_node("ik_geometric")
     get_model_info()
