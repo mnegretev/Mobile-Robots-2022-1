@@ -19,7 +19,6 @@ import urdf_parser_py.urdf
 from geometry_msgs.msg import PointStamped
 from custom_msgs.msg import ArmConfiguration
 from custom_msgs.srv import *
-
 def get_model_info():
     global joints, transforms
     robot_model = urdf_parser_py.urdf.URDF.from_parameter_server()
@@ -62,9 +61,12 @@ def forward_kinematics(q, Ti, Wi):
     #     Check online documentation of these functions:
     #     http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
     #
-    
-    x,y,z = 0,0,0  # Get xyz from resulting H
-    R,P,Y = 0,0,0  # Get RPY from resulting H
+    H= tft.identity_matrix()
+    for i in range(len(q)):
+	H= tft.concatenate_matrices(H,Ti[i],tft.totation_matrix(q[i],Wi[i]))
+    H= tft.concatenate_matrices(H,Ti[7])
+    x,y,z = H[0][3],H[1][3],H[2][3]  # Get xyz from resulting H
+    R,P,Y = tft.euler_from_matrix(H,'rxyz')  # Get RPY from resulting H
     return numpy.asarray([x,y,z,R,P,Y])
 
 def jacobian(q, Ti, Wi):
@@ -94,6 +96,8 @@ def jacobian(q, Ti, Wi):
     J = numpy.asarray([[0.0 for a in q] for i in range(6)])            # J 6x7 full of zeros
     qn = numpy.asarray([q,]*len(q)) + delta_q*numpy.identity(len(q))   # q_next as indicated above
     qp = numpy.asarray([q,]*len(q)) - delta_q*numpy.identity(len(q))   # q_prev as indicated above
+    for i in range(0,7):
+	J[:,i]=(forward_kinematics(qn[i,:],Ti,Wi)-foward_kinematics(qp[i,:],Ti,Wi))/(2*delta_q)
     
     return J
 
@@ -126,8 +130,28 @@ def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
     #    Return calculated q if maximum iterations were not exceeded
     #    Otherwise, return None
     #
-    
-    return None
+    p= foward_kinematics(q,Ti,Wi)
+    error=p-pd
+    while numpy.linealg.norm(error)>tolerance and iterations<max_iterations:
+	for i in range(len(error)):
+		if error[i]> math.pi:
+			error[i]-=2*math.pi
+		elif error[i]<(-math.pi):
+			error[i]+=2*math.pi
+	J=jacobian(q,Ti,Wi)
+	q=q-numpy.dot(numpy.linalg.pinv(J),error)
+	for i in range(len(q)):
+		if q[i]> math.pi:
+			q[i]-=2*math.pi
+		elif q[i]<(-math.pi):
+			q[i]+=2*math.pi
+	p = foward_kinematics(q,Ti,Wi)
+	error=p-pd
+	iterations+=1
+    if(iterations<max_iterations):
+	return q
+    else:
+    	return None
 
 def callback_la_ik_for_pose(req):
     global transforms, joints
@@ -171,6 +195,7 @@ def callback_ra_fk(req):
 
 def main():
     print("INITIALIZING INVERSE KINEMATIC NODE BY MARCOSOFT...")
+    print("Practica 10: Chavez_Contreras_Marco_Antonio")
     rospy.init_node("ik_geometric")
     get_model_info()
     rospy.Service("/manipulation/la_inverse_kinematics", InverseKinematicsForPose, callback_la_ik_for_pose)
