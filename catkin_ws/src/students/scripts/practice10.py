@@ -19,6 +19,7 @@ import urdf_parser_py.urdf
 from geometry_msgs.msg import PointStamped
 from custom_msgs.msg import ArmConfiguration
 from custom_msgs.srv import *
+NAME = "Garcia_Martinez_Alan"
 
 def get_model_info():
     global joints, transforms
@@ -62,9 +63,13 @@ def forward_kinematics(q, Ti, Wi):
     #     Check online documentation of these functions:
     #     http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
     #
-    
-    x,y,z = 0,0,0  # Get xyz from resulting H
-    R,P,Y = 0,0,0  # Get RPY from resulting H
+    H = tft.identity_matrix()
+    Ri = tft.rotation_matrix(q,Wi)
+    for i in range(len(q)):
+	H*= tft.concatenate_matrices(H,Ti, Ri)
+    H*= tft.concatenate_matrices(H,Ti[7])
+    [x,y,z] = [H[03],H[13],H[23]]  # Get xyz from resulting H
+    [R,P,Y] = tft.euler_from_matrix(H[03]),tft.euler_from_matrix(H[13]),tft.euler_from_matrix(H[23])  # Get RPY from resulting H
     return numpy.asarray([x,y,z,R,P,Y])
 
 def jacobian(q, Ti, Wi):
@@ -92,9 +97,10 @@ def jacobian(q, Ti, Wi):
     #     RETURN J
     #     
     J = numpy.asarray([[0.0 for a in q] for i in range(6)])            # J 6x7 full of zeros
-    qn = numpy.asarray([q,]*len(q)) + delta_q*numpy.identity(len(q))   # q_next as indicated above
-    qp = numpy.asarray([q,]*len(q)) - delta_q*numpy.identity(len(q))   # q_prev as indicated above
-    
+    q_n = numpy.asarray([q,]*len(q)) + delta_q*numpy.identity(len(q))   # q_next as indicated above
+    q_p = numpy.asarray([q,]*len(q)) - delta_q*numpy.identity(len(q))   # q_prev as indicated above
+    for i in range(7):
+	J[:,i] = ( forward_kinematics(i-th, [00], q_n) - forward_kinematics(i-th, [01], q_p) ) / (2*delta_q)
     return J
 
 def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
@@ -126,8 +132,22 @@ def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
     #    Return calculated q if maximum iterations were not exceeded
     #    Otherwise, return None
     #
-    
-    return None
+    P = numpy.arrasay()
+    error = P - pd
+    Wi = [-math.pi, math.pi]
+    while abs(error) > tolerance & i < max_iterations:
+	jacobian()
+	q = q - numpy.dot(numpy.linal.pinv(J),error)
+        Wi = [-math.pi, math.pi]
+	P = forward_kinematics(q, Ti, Wi)
+	error = P - pd
+	Wi = [-math.pi, math.pi]
+	i+=i
+    if max_iterations <= i:
+	return q
+    else:
+	return 0
+    return
 
 def callback_la_ik_for_pose(req):
     global transforms, joints
