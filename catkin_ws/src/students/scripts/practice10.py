@@ -61,6 +61,12 @@ def forward_kinematics(q, Ti, Wi):
     #     Use the tft.euler_from_matrix() function to get RPY from matrix H
     #     Check online documentation of these functions:
     #     http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
+    
+    H=tft.identity_matrix()
+    for i in range (len(q)):
+        H=tft.concatenate_matrices(H,Ti[i],tft.rotation_matrix(q[i],Wi[i]))
+        H=tft.concatenate_matrices(H,Ti[7])
+    
     #
     
     x,y,z = 0,0,0  # Get xyz from resulting H
@@ -95,6 +101,12 @@ def jacobian(q, Ti, Wi):
     qn = numpy.asarray([q,]*len(q)) + delta_q*numpy.identity(len(q))   # q_next as indicated above
     qp = numpy.asarray([q,]*len(q)) - delta_q*numpy.identity(len(q))   # q_prev as indicated above
     
+    #
+    for i in range(0,7):
+        J[:,i]=(forward_kinematics(qn[i,:],Ti,Wi)-forward_kinematics(qp[i,:],Ti,Wi))/(2*delta_q)
+
+
+    #
     return J
 
 def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
@@ -125,6 +137,35 @@ def inverse_kinematics_xyzrpy(x, y, z, roll, pitch, yaw, Ti, Wi):
     #        Increment iterations
     #    Return calculated q if maximum iterations were not exceeded
     #    Otherwise, return None
+    p=forward_kinematics(q,Ti,Wi)
+    error=p-pd
+
+    while error > tolerance and iterations < max_iterations
+        for i in range(len(error)):
+            if error[i]>math.pi:
+                error[i]-=math.pi*2
+            elif error[i]<-math.pi:
+                error[i]+=math.pi*2
+        J=jacobian(q,Ti,Wi)
+        q=q-numpy.doy(numpy.linalg.pinv(J),error)
+
+    for i in range(len(q)):
+        if q[i]>math.pi:
+            q[i]-=math.pi*2
+        elif q[i]<-math.pi:
+            q[i]+=math.pi*2
+    
+    p=forward_kinematics(q,Ti,Wi)
+    error=p-pd
+    iterations+=1
+    if iterations<max_iterations:
+        return q
+    else:
+        return None
+
+
+
+
     #
     
     return None
