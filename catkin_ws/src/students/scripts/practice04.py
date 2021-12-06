@@ -42,8 +42,8 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     #
     alpha =0.1
     beta  =0.1
-    v_max =0.7
-    w_max =0.7
+    v_max =0.3
+    w_max =0.5
     error_a=(math.atan2(goal_y-robot_y,goal_x-robot_x))-robot_a
     if (error_a > math.pi):
         error_a = error_a-2*math.pi
