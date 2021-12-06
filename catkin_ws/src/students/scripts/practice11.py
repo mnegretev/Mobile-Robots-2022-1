@@ -42,7 +42,8 @@ class NeuralNetwork(object):
         return x
 
     def feedforward_verbose(self, x):
-        #
+        
+#
         # TODO:
         # Write a function similar to 'feedforward' but instead of returning only the output layer,
         # return a list containing the output of each layer, from input to output.
