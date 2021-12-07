@@ -14,7 +14,7 @@ import numpy
 import rospy
 import rospkg
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "CEBALLOS EQUIHUA CONAN NATHANIEL"
 
 class NeuralNetwork(object):
     def __init__(self, layers, weights=None, biases=None):
@@ -49,6 +49,13 @@ class NeuralNetwork(object):
         # Include input x as the first output.
         #
         y = []
+        y.append(x)
+
+        for i in range(len(self.biases)):
+            z = numpy.dot(self.weights[i], x) + self.biases[i]
+            x = 1.0 / (1.0 + numpy.exp(-z))
+            y.append(x)
+
         return y
 
     def backpropagate(self, x, yt):
@@ -71,7 +78,17 @@ class NeuralNetwork(object):
         #     where 'WT' is the transpose of the matrix of weights of layer l+1 and 'yl' is the output of layer l
         #     nabla_b[-l] = delta
         #     nabla_w[-l] = delta*ylpT  where ylpT is the transpose of outputs vector of layer l-1
-        #        
+        #
+
+        delta = (y[-1] - yt) * y[-1] * (1 - y[-1])
+        nabla_b[-1] = delta
+        nabla_w[-1] = delta * numpy.transpose(y[-2])
+
+        for l in range(2, len(self.biases) + 1):
+            delta = numpy.dot(numpy.transpose(self.weights[-l + 1]), delta) * y[-l] * (1 - y[-l])
+            nabla_b[-l] = delta
+            nabla_w[-l] = delta * numpy.transpose(y[-l - 1])
+
         return nabla_w, nabla_b
 
     def update_with_batch(self, batch, eta):
