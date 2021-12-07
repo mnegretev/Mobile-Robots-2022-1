@@ -1,0 +1,11 @@
+#JSGF V1.0;
+/**
+ * JSGF Grammar similar to kws example
+ */
+
+grammar proyectof;
+
+public <move> = JUSTINA MOVE <location>;
+<location> = ANNEXED|PRINCIPAL|INSTITUTE;
+
+
