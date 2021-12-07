@@ -3,8 +3,8 @@
         <remap from="jsgf_audio" to="sphinx_audio"/>
         <param name="gram" value="$(find pocketsphinx)/vocab/Project_Dictionary"/>
         <param name="dict" value="$(find pocketsphinx)/vocab/Project_Dictionary.dic"/>
-        <param name="grammar" value="Project_Dictionary"/>
-        <param name="rule" value="move2"/>
+        <param name="grammar" value="voice_cmd"/>
+        <param name="rule" value="move"/>
         <param name="lm" value=":default"/>
         <param name="hmm" value=":default"/>
     </node>
