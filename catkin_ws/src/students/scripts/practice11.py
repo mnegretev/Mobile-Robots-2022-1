@@ -14,48 +14,46 @@ import numpy
 import rospy
 import rospkg
 
-NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+NAME = "Flores Gonzalez"
 
 class NeuralNetwork(object):
+
+    # The list 'layers' indicates the number of neurons in each layer.
+    # Remember that the first layer indicates the dimension of the inputs and thus,
+    # there is no bias vector fot the first layer.
+    # For this practice, 'layers' should be something like [784, n2, n3, ..., nl, 10]
+    # All weights and biases are initialized with random values. In each layer we have a matrix
+    # of weights where row j contains all the weights of the j-th neuron in that layer. For this example,
+    # the first matrix should be of order n2 x 784 and last matrix should be 10 x nl.
     def __init__(self, layers, weights=None, biases=None):
-        #
-        # The list 'layers' indicates the number of neurons in each layer.
-        # Remember that the first layer indicates the dimension of the inputs and thus,
-        # there is no bias vector fot the first layer.
-        # For this practice, 'layers' should be something like [784, n2, n3, ..., nl, 10]
-        # All weights and biases are initialized with random values. In each layer we have a matrix
-        # of weights where row j contains all the weights of the j-th neuron in that layer. For this example,
-        # the first matrix should be of order n2 x 784 and last matrix should be 10 x nl.
-        #
         self.num_layers  = len(layers)
         self.layer_sizes = layers
         self.biases =[numpy.random.randn(y,1) for y in layers[1:]] if biases == None else biases
         self.weights=[numpy.random.randn(y,x) for x,y in zip(layers[:-1],layers[1:])] if weights==None else weights
         
     def feedforward(self, x):
-        #
-        # This function gets the output of the network when input is 'x'.
-        #
         for i in range(len(self.biases)):
             z = numpy.dot(self.weights[i], x) + self.biases[i]
-            x = 1.0 / (1.0 + numpy.exp(-z))  #output of the current layer is the input of the next one
+            x = 1.0 / (1.0 + numpy.exp(-z))  
         return x
 
+    # TODO:
+    # Write a function similar to 'feedforward' but instead of returning only the output layer,
+    # return a list containing the output of each layer, from input to output.
+    # Include input x as the first output.
     def feedforward_verbose(self, x):
-        #
-        # TODO:
-        # Write a function similar to 'feedforward' but instead of returning only the output layer,
-        # return a list containing the output of each layer, from input to output.
-        # Include input x as the first output.
-        #
         y = []
+        y.append(x)
+        for i in range(len(self.layer_sizes)-1):
+          u=numpy.dot(self.weights[i],x)+self.biases[i]
+          x=1.0/(1.0+numpy.exp(-u))
+          y.append(x)
         return y
 
     def backpropagate(self, x, yt):
         y = self.feedforward_verbose(x)
         nabla_b = [numpy.zeros(b.shape) for b in self.biases]
         nabla_w = [numpy.zeros(w.shape) for w in self.weights]
-        # TODO:
         # Return a tuple [nabla_w, nabla_b] containing the gradient of cost function C with respect to
         # each weight and bias of all the network. The gradient is calculated assuming only one training
         # example is given: the input 'x' and the corresponding label 'yt'.
@@ -66,20 +64,26 @@ class NeuralNetwork(object):
         # Calculate delta for the output layer L: delta=(yL-yt)*yL*(1-yL)
         # nabla_b of output layer = delta      
         # nabla_w of output layer = delta*yLpT where yLpT is the transpose of the ouput vector of layer L-1
-        # FOR all layers 'l' from L-1 to input layer: 
+	# FOR all layers 'l' from L-1 to input layer: 
         #     delta = (WT * delta)*yl*(1 - yl)
         #     where 'WT' is the transpose of the matrix of weights of layer l+1 and 'yl' is the output of layer l
         #     nabla_b[-l] = delta
         #     nabla_w[-l] = delta*ylpT  where ylpT is the transpose of outputs vector of layer l-1
-        #        
+        delta=(y[-1]-yt)*y[-1]*(1-y[-1])
+        nabla_b[-1]=delta
+        nabla_w[-1]=delta*numpy.transpose(y[-2])
+        
+        for i in range (2,len(self.layer_sizes)):
+          delta=numpy.dot(numpy.transpose(self.weights[-i+1]),delta)*y[-i]*(1-y[-i])
+          nabla_b[-i]=delta
+          nabla_w[-i]=delta*numpy.transpose(y[-i-1])
+
         return nabla_w, nabla_b
 
     def update_with_batch(self, batch, eta):
-        #
         # This function exectutes gradient descend for the subset of examples
         # given by 'batch' with learning rate 'eta'
         # 'batch' is a list of training examples [(x,y), ..., (x,y)]
-        #
         nabla_b = [numpy.zeros(b.shape) for b in self.biases]
         nabla_w = [numpy.zeros(w.shape) for w in self.weights]
         M = len(batch)
@@ -109,10 +113,8 @@ class NeuralNetwork(object):
                 sys.stdout.write("\rGradient magnitude: %f            " % (self.get_gradient_mag(nabla_w, nabla_b)))
                 sys.stdout.flush()
             print("Epoch: " + str(j))
-    #
-    ### END OF CLASS
-    #
 
+### END OF CLASS
 
 def load_dataset(folder):
     print "Loading data set from " + folder
