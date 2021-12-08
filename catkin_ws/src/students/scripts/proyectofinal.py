@@ -1,7 +1,11 @@
 import sys
 import rospy
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
+from sound_play.msg import SoundRequest
+from std_msgs.msg import String
 
+NAME = "Proyecto_Final_Gutierrez_Alcibar_y_Herrera_Cordero"
+ 
 robopub = None
 
 def movement(instruction):
@@ -9,6 +13,7 @@ def movement(instruction):
 	coords = PoseStamped()
 
 	if moving:
+		robotalk(instruction)
 		print(moving)
 	else:
 		coords.position.w = 1
@@ -16,6 +21,7 @@ def movement(instruction):
 			coords.pose.position.x = 7.0000
 			coords.pose.position.y = -1.0000
 			robopub.publsh(coords)
+			robotalk("Moving to " + instruction )
 		elif(instrucion == "GO TO SAFETY CONE"):
 			coords.pose.position.x = 8.5000
 			coords.pose.position.y = 0.0000
@@ -35,8 +41,9 @@ def movement(instruction):
 
 def robotalk(talk):
 	Rtalk = SoundRequest()
-	Rtalk.sound = 1
-	Rtalk.volume = 2
+	Rtalk.sound = -3
+	Rtalk.volume = 1
+	Rtalk.command = 1
 	Rtalk.arg = talk
 
 	robopubtalk.publish(Rtalk)
