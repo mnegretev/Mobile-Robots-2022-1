@@ -1,0 +1,4 @@
+grammar final;
+public <move> = GO TO <furniture>
+
+<furniture> = COUCH | DESK | TABLE | SAFETY CONE | BOOKSELLER; 
