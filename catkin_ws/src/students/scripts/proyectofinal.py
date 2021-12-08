@@ -1,5 +1,7 @@
 import sys
 import rospy
+#import sound_play.msg import SoundRequest
+#from std_msgs.msg import String
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
 robopub = None
@@ -33,13 +35,25 @@ def movement(instruction):
 			coords.pose.position.y = 6.2000
 			robopub.publish(coords)
 
-def robotalk(talk):
-	Rtalk = SoundRequest()
-	Rtalk.sound = 1
-	Rtalk.volume = 2
-	Rtalk.arg = talk
+#def robotalk(talk):
+#	Rtalk = SoundRequest()
+#	Rtalk.sound = 1
+#	Rtalk.volume = 2
+#	Rtalk.arg = talk
 
-	robopubtalk.publish(Rtalk)
+#	robopubtalk.publish(Rtalk)
+
+def lugar(msg):
+	instruction =msg.data
+	movement(instruction)
+
+def main():
+
+	glogal robopub
+	rospy,init_node("final")
+	robotpub=rospy.Publisher('/move_base_simple/goal',PosesStamped,queue_size=1)
+	loop = rospy.Rate(20)
+	rospy.spin()
 
 if __name__ == '__main__':
 	try:
