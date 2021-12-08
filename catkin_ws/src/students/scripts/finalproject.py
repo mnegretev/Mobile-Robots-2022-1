@@ -10,7 +10,7 @@ from std_msgs.msg import String
 
 pub_local_robot = None
 loop = None
-
+zone=0
 def move_robot(speech_coord):
     global is_moving, zone
     localization = PoseStamped()
@@ -69,6 +69,7 @@ def callback_goal(msg):
     callback_sound()
 
 def callback_sound():
+    global zone, is_moving
     if (is_moving==False):
       soundhandle=SoundClient(blocking=True)
       if(zone==1):
@@ -79,11 +80,11 @@ def callback_sound():
           soundhandle.say('The robot has reached the bedroom')
       elif(zone==4):
           soundhandle.say('The robot has reached the kichen')
-
+      
 def main():
-    global pub_local_robot, loop, is_moving, zone
+    global pub_local_robot, loop, is_moving, zone, reached
     is_moving = False
-
+    reached=False
     print("FINAL PRACTICE: Ceballos Equihua - Murrieta Villegas - Reza Chavarria - Valdespino Mendieta")
     rospy.init_node("finalproject")
     pub_local_robot = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=1)
