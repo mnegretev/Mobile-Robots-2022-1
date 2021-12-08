@@ -16,9 +16,7 @@
   <node name="p03" pkg="students" type="practice03.py" output="screen"/>
   <node name="p04" pkg="students" type="practice04.py" output="screen"/>
   
-<!--
   <node name="project" pkg="students" type="finalproject.py" output="screen"/>
--->
   <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py"/>
 
   <include file="$(find surge_et_ambula)/launch/speech_recognition.launch"/>
