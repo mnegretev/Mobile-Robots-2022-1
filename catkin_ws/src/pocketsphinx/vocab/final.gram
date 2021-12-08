@@ -1,3 +1,9 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar similar to kws example
+ */
+
 grammar final;
 public <move> = GO TO <furniture>
 
