@@ -59,12 +59,12 @@ def main():
 	rospy.init_node("final")
 	rospy.Subscriber('/recognized',String,lugar)
 	robopubtalk = rospy.Publisher('/robotsound',SoundRequest,queue_size=1) 
-	robopub=rospy.Publisher('/move_base_simple/goal',PosesStamped,queue_size=1)
+	robopub=rospy.Publisher('/move_base_simple/goal',PoseStamped,queue_size=1)
 	loop = rospy.Rate(20)
 	rospy.spin()
 
 if __name__ == '__main__':
 	try:
 		main()
-	except rospy.ROSInterruptionexception:
+	except rospy.ROSInterruptException:
 		pass
