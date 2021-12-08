@@ -9,16 +9,21 @@
 # must be 0.8 and 1.0 respectively.
 #
 import sys
+from sound_play.msg import SoundRequest
 import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
+
 NAME = "Cadena Campos Luis -Flores Gonzalez Jesus- Hernandez FontesAldo"
 
-def mover_robot():
+candado = False
+meta = False
+
+def mover_robot(orden):
+    global candado
     #Obtener donde esta ubicado el robot 
     coord_pos=PoseStamped()
-    global candado
     if not candado:
         if(orden=="JUSTINA MOVE ANNEXED"):
             hablar("MOVING TO THE ANNEXED")
@@ -28,7 +33,7 @@ def mover_robot():
             publishing_coord.publish(coord_pos)
             if meta:
                 hablar("Arrived to the ANNEXED")
-            else meta:
+            else:
                 hablar("JUSTINA is moving to the ANNEXED")
     
         elif(orden=="JUSTINA MOVE PRINCIPAL"):
@@ -39,7 +44,7 @@ def mover_robot():
             publishing_coord.publish(coord_pos)
             if meta:
                 hablar("Arrived to the PRINCIPAL")
-            else meta:
+            else:
                 hablar("JUSTINA is moving to the PRINCIPAL")
 
         elif(orden=="JUSTINA MOVE INSTITUTE"):
@@ -50,9 +55,9 @@ def mover_robot():
             publishing_coord.publish(coord_pos)
             if meta:
                 hablar("Arrived to the INSTITUTE")
-            else meta:
+            else:
                 hablar("JUSTINA is moving to the INSTITUTE")        
-    else 
+    else: 
         print("En movimiento")
 
 
@@ -67,8 +72,8 @@ def hablar(texto):
     publicador_habla.publish(Robot_voice)
 
 
-def cachar_orden():
-    #Ob
+def cachar_orden(msg):
+    global candado
     orden=msg.data
     mover_robot(orden)
     
@@ -84,7 +89,7 @@ def verificar_mov(msg):
 
 
 def main():
-    global loop,publishing_coord,publicador_habla
+    global loop,publishing_coord,publicador_habla,candado
     print "Proyecto Final- " + NAME
     rospy.init_node("proyectoF")
     rospy.Subscriber('/recognized',String,cachar_orden)
