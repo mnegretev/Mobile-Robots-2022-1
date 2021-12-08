@@ -7,6 +7,6 @@
 
 grammar voice_cmd;
 
-public <move>= ROBOT STOP | ROBOT GO TO <direction>
+public <move>= ROBOT GO TO <direction>;
 
-<direction>=KITCHEN|BATHEOOM|BEDROOM
+<direction>=EXIT|CYDONIA|CONSTANTINOPLA;
