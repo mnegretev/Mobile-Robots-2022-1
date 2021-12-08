@@ -1,7 +1,7 @@
 <launch>
   <node name="speech_recog" pkg="pocketsphinx" type="asr_test.py" output="screen">
     <remap from="jsgf_audio" to="sphinx_audio" />
-    <param name="gram" value="$(find pocketsphinx)/vocab/final.gram"/>
+    <param name="gram" value="$(find pocketsphinx)/vocab/final"/>
     <param name="dict" value="$(find pocketsphinx)/vocab/final.dict"/>
     <param name="grammar" value="final"/>
     <param name="rule" value="move"/>
