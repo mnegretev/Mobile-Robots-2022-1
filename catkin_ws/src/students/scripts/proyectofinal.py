@@ -53,7 +53,7 @@ def robotalk(talk):
 
 	robopubtalk.publish(Rtalk)
 
-def lugar(msg):
+def lugar(instruction):
 	instruction=msg.data
 	move_robot(instruction)
 
