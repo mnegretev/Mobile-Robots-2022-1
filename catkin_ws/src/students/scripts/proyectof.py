@@ -38,9 +38,9 @@ def mover_robot(orden):
     
         elif(orden=="JUSTINA MOVE PRINCIPAL"):
             hablar("MOVING TO THE PRINCIPAL")
-            #PRINCIPAL (5.28104,4.05978)
-            coord_pos.pose.position.x=(5.28104) 
-            coord_pos.pose.position.y=(4.05978)
+            #PRINCIPAL (5.0,4.0)
+            coord_pos.pose.position.x=(4.0) 
+            coord_pos.pose.position.y=(4.0)
             publishing_coord.publish(coord_pos)
             if meta:
                 hablar("Arrived to the PRINCIPAL")

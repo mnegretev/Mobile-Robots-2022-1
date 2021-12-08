@@ -7,5 +7,6 @@
   <node name="proyectof"   pkg="students" type="proyectof.py"/>
 
   <include file="$(find surge_et_ambula)/launch/speech_recognition.launch"/>
+ <include file="$(find surge_et_ambula)/launch/path_planning.launch"/>
 
 </launch>
