@@ -17,7 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
-NAME = "Ramirez Castanon"
+NAME = "Practica4"
 
 pub_cmd_vel = None
 loop        = None
@@ -47,8 +47,8 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     #
     alpha = 0.5
     beta = 0.5
-    v_max = 0.5
-    w_max = 2*math.pi
+    v_max = 0.3
+    w_max = 0.5*math.pi
 
     #
     # A continuacion determinamos el error de angulo y determinamos que
