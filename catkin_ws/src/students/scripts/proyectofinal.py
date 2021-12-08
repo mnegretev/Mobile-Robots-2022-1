@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import sys
 import rospy
-import sound_play.msg import SoundRequest
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 from sound_play.msg import SoundRequest
 from std_msgs.msg import String
