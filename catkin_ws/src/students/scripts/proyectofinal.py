@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import rospy
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
@@ -8,7 +9,7 @@ NAME = "Proyecto_Final_Gutierrez_Alcibar_y_Herrera_Cordero"
  
 robopub = None
 
-def movement(instruction):
+def move_robot(instruction):
 	global moving
 	coords = PoseStamped()
 
@@ -34,7 +35,7 @@ def movement(instruction):
 			coords.pose.position.x = 9.0000
 			coords.pose.position.y = 6.4000
 			robopub.publish(coords)
-		else(instruction == "GO TO DESK"):
+		elif(instruction == "GO TO DESK"):
 			coords.pose.position.x = 3.2000
 			coords.pose.position.y = 6.2000
 			robopub.publish(coords)
@@ -47,6 +48,18 @@ def robotalk(talk):
 	Rtalk.arg = talk
 
 	robopubtalk.publish(Rtalk)
+
+def lugar(msg):
+	instruction =msg.data
+	move_robot(instruction)
+
+def main():
+
+	global robopub
+	rospy.init_node("final")
+	robotpub=rospy.Publisher('/move_base_simple/goal',PosesStamped,queue_size=1)
+	loop = rospy.Rate(20)
+	rospy.spin()
 
 if __name__ == '__main__':
 	try:
