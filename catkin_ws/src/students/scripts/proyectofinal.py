@@ -57,7 +57,9 @@ def main():
 
 	global robopub
 	rospy.init_node("final")
-	robotpub=rospy.Publisher('/move_base_simple/goal',PosesStamped,queue_size=1)
+	rospy.Subscriber('/recognized',String,lugar)
+	robopubtalk = rospy.Publisher('/robotsound',SoundRequest,queue_size=1) 
+	robopub=rospy.Publisher('/move_base_simple/goal',PosesStamped,queue_size=1)
 	loop = rospy.Rate(20)
 	rospy.spin()
 
