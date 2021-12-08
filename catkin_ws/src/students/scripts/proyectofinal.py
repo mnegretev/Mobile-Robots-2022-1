@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import sys
 import rospy
-#import sound_play.msg import SoundRequest
-#from std_msgs.msg import String
+import sound_play.msg import SoundRequest
+from std_msgs.msg import String
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 from sound_play.msg import SoundRequest
 from std_msgs.msg import String
@@ -46,22 +46,15 @@ def move_robot(instruction):
 			robopub.publish(coords)
 			robotalk("Moving to " + intruction)
 
-<<<<<<< HEAD
-#def robotalk(talk):
-#	Rtalk = SoundRequest()
-#	Rtalk.sound = 1
-#	Rtalk.volume = 2
-#	Rtalk.arg = talk
-=======
+
 def robotalk(talk):
 	Rtalk = SoundRequest()
 	Rtalk.sound = -3
 	Rtalk.volume = 1
 	Rtalk.command = 1
 	Rtalk.arg = talk
->>>>>>> 0b5c7575af0075e7cb17f8240ad47de6ba2326c1
 
-#	robopubtalk.publish(Rtalk)
+	robopubtalk.publish(Rtalk)
 
 def lugar(msg):
 	instruction =msg.data
