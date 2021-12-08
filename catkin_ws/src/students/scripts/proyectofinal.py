@@ -13,10 +13,9 @@ def move_robot(instruction):
 	global moving
 	coords = PoseStamped()
 
-	if moving == True:
+	if moving = True:
 		robotalk(instruction)
-		print(moving)
-	else:
+	if not moving:
 		coords.position.w = 1
 		if (instruction == "GO TO BOOKSELLER"):
 			coords.pose.position.x = 7.0000
@@ -55,7 +54,7 @@ def robotalk(talk):
 	robopubtalk.publish(Rtalk)
 
 def lugar(msg):
-	instruction =msg.data
+	instruction=msg.data
 	move_robot(instruction)
 
 def main():
