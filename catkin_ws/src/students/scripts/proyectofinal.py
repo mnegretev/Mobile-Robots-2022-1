@@ -13,7 +13,7 @@ def move_robot(instruction):
 	global moving
 	coords = PoseStamped()
 
-	if moving:
+	if moving = True:
 		robotalk(instruction)
 		print(moving)
 	else:
