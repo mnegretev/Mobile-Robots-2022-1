@@ -56,21 +56,7 @@ def robotalk(talk):
 
 def lugar(msg):
 	instruction =msg.data
-	movement(instruction)
-
-def main():
-
-	glogal robopub
-	rospy,init_node("final")
-	robotpub=rospy.Publisher('/move_base_simple/goal',PosesStamped,queue_size=1)
-	loop = rospy.Rate(20)
-	rospy.spin()
-
-def lugar(msg):
-	instruction =msg.data
 	move_robot(instruction)
-
-
 
 def main():
 
