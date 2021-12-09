@@ -1,0 +1,24 @@
+<launch>
+    <node name="dictionary" pkg="pocketsphinx" type="asr_test.py">
+    <node name="send_audio" pkg="pocketsphinx" type="send_audio.py">
+    <node name="SoundPlay" pkg="soundplay" type="soundplay_node.py">
+    <node name="practice01" pkg="students" type="practice01.py">
+    <node name="practice02" pkg="students" type="practice02.py">
+    <node name="practice03" pkg="students" type="practice03.py">
+    <node name="practice04" pkg="students" type="practice04.py">
+    <node name="practice04proyecto" pkg="students" type="practice04proyecto.py">
+
+    <node name="speech_recog" pkg="pocketsphinx" type="asr_test.py" output="screen">
+        <remap from="jsgf_audio" to="sphinx_audio"/>
+        <param name="gram" value="$(find pocketsphinx)/vocab/voice_cmd"/>
+        <param name="dict" value="$(find pocketsphinx)/vocab/dictionary.dict"/>
+        <param name="grammar" value="voice_cmd"/>
+        <param name="rule" value="move"/>
+        <param name="lm" value=":default"/>
+        <param name="hmm" value=":default"/>
+    </node>
+
+    <node name="audio_control" pkg="pocketsphinx" type="send_audio.py" output="screen">
+        <param name="input" value=":default"/>
+    </node>
+</launch>

@@ -1,0 +1,12 @@
+#JSGF v1.0;
+
+
+/**
+*JSGF Grammar similar to ROS example
+*/
+
+grammar voice_cmd;
+
+public <move>= ROBOTINA COME TO <direction>;
+
+<direction>=BATHROOM|KITCHEN|BEDROOM|STOP;
