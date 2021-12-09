@@ -170,21 +170,21 @@ def callback_desplazamiento (msg):
         coordenadas.pose.position.x = (3.3)
         coordenadas.pose.position.y = (0.78)
         pub_coordenadas.publish(coordenadas)
-        if (robot_x == 5.0 and robot_y == 5.0):
+        if (coordenadas.pose.position.x == 3.3 and coordenadas.pose.position.y == 0.78):
                 respuesta("Moving to A")
                 
     elif msg == "GO TO B":
         coordenadas.pose.position.x = (8.33)
         coordenadas.pose.position.y = (0.64)
         pub_coordenadas.publish(coordenadas)
-        if (robot_x == 3.0 and robot_y == 0.0):
+        if (coordenadas.pose.position.x == 8.33 and coordenadas.pose.position.y == 0.64):
                 respuesta("Moving to B")
         
     elif msg == "GO TO C":
         coordenadas.pose.position.x = (0)
         coordenadas.pose.position.y = (0)
         pub_coordenadas.publish(coordenadas)
-        if (robot_x == 7.0 and robot_y == 1.0):
+        if (coordenadas.pose.position.x == 0 and coordenadas.pose.position.y == 0):
                 respuesta("Moving to C")
         
 def callback_recognized (msg):
