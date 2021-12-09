@@ -3,6 +3,7 @@
     <node name="practice02" pkg="students" type="practice02.py"/>
     <node name="practice03" pkg="students" type="practice03.py"/>
     <node name="practice04_proj" pkg="students" type="practice04_proj.py"/>
+    <node name="SoundPlay" pkg="sound_play" type="soundplay_node.py"/> 
     <include file="$(find surge_et_ambula)/launch/Project_Dictionary.launch"/>
 
     <node name="Pruebaproyecto3" pkg="students" type="Pruebaproyecto3.py"/>

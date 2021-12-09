@@ -17,6 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 
+
 NAME = "Chavez_Contreras_Marco_Antonio"
 
 pub_cmd_vel = None
@@ -109,6 +110,7 @@ def callback_global_goal(msg):
     print ("Following path with " + str(len(path.poses)) + " points...")
     follow_path([[p.pose.position.x, p.pose.position.y] for p in path.poses])
     print ("Global goal point reached")
+    
 
 def get_robot_pose(listener):
     try:
@@ -126,6 +128,7 @@ def main():
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+    
     listener = tf.TransformListener()
     loop = rospy.Rate(10)
     print("Waiting for service for path planning...")
