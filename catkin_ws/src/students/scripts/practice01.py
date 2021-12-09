@@ -15,11 +15,11 @@ from nav_msgs.srv import GetMap
 from nav_msgs.srv import GetMapResponse
 from nav_msgs.srv import GetMapRequest
 
-NAME = "CADENA CAMPOS LUIS"
+NAME = "proyectof"
 
 def get_inflated_map(static_map, inflation_cells):
     print("Inflating map by " + str(inflation_cells) + " cells")
-    inflated = numpy.copy(static_map)
+    inflated = numpy.copy(static_map)  #copia del mapa original
     [height, width] = static_map.shape
     #
     # TODO:
@@ -28,48 +28,22 @@ def get_inflated_map(static_map, inflation_cells):
     # Map is given in 'static_map' as a bidimensional numpy array.
     # Consider as occupied cells all cells with an occupation value greater than 50
     #
-    for i in range(height):    ##Linea 24
-   	    for j in range(width):
-   	         if static_map[i,j] == 100:
-   	              for k1 in range (inflation_cells,inflation_cells+1):
-   	                  for k2 in range(-inflation_cells,inflation_cells+1):
-   	                      inflated[i+k1,j+k2]=100
-    
+    #
+   
+    for i in range(height):
+	for j in range(width):
+		if static_map[i,j]==100:
+			for k1 in range(i-inflation_cells,i+inflation_cells + 1):
+				for k2 in range(j-inflation_cells,j+inflation_cells + 1):
+					inflated[k1,k2]=static_map[i,j]
     return inflated
 
 def get_cost_map(static_map, cost_radius):
     if cost_radius > 20:
         cost_radius = 20
-    print ("Calculating cost map with" +str(cost_radius) + " cells")
-    cost_map = numpy.copy(static_map)
+    print "Calculating cost map with " +str(cost_radius) + " cells"
+    cost_map = numpy.copy(static_map) #copia del mapa original
     [height, width] = static_map.shape
-    #
-    # TODO:
-    # Write the code necessary to calculate a cost map for the given map.
-    # To calculate cost, consider as example the following map:    
-    # [[ 0 0 0 0 0 0]
-    #  [ 0 X 0 0 0 0]
-    #  [ 0 X X 0 0 0]
-    #  [ 0 X X 0 0 0]
-    #  [ 0 X 0 0 0 0]
-    #  [ 0 0 0 X 0 0]]
-    # Where occupied cells 'X' have a value of 100 and free cells have a value of 0.
-    # Cost is an integer indicating how near cells and obstacles are:
-    # [[ 3 3 3 2 2 1]
-    #  [ 3 X 3 3 2 1]
-    #  [ 3 X X 3 2 1]
-    #  [ 3 X X 3 2 2]
-    #  [ 3 X 3 3 3 2]
-    #  [ 3 3 3 X 3 2]]
-    # Cost_radius indicate the number of cells around obstacles with costs greater than zero.   
-    for i in range(height):
-       for j in range(width):
-           if static_map[i,j] == 100:
-                for k1 in range(-cost_radius,cost_radius+1):
-                    for k2 in range(-cost_radius,cost_radius+1):
-                        c= cost_radius - max(abs(k2),abs(k1))+1
-                        M= cost_map[i+k1,j+k2]                        
-                        cost_map[i+k1,j+k2] = max(c,M)
     #
     # TODO:
     # Write the code necessary to calculate a cost map for the given map.
@@ -90,6 +64,15 @@ def get_cost_map(static_map, cost_radius):
     #  [ 3 3 3 X 3 2]]
     # Cost_radius indicate the number of cells around obstacles with costs greater than zero.
     
+    for i in range(height):
+	for j in range(width):
+		if static_map[i,j]==100:
+			for k1 in range(-cost_radius, cost_radius + 1):
+				for k2 in range(-cost_radius, cost_radius + 1):
+					c= cost_radius-max(abs(k1),abs(k2)) + 1
+					m= cost_map[i+k1, j+k2]
+					cost_map[i + k1, j + k2]=max(c,m)
+			
     return cost_map
 
 def callback_inflated_map(req):
@@ -102,7 +85,7 @@ def callback_cost_map(req):
     
 def main():
     global cost_map, inflated_map
-    print ("PRACTICE 01 - " + NAME)
+    print "PRACTICE 01 - " + NAME
     rospy.init_node("practice01")
     rospy.wait_for_service('/static_map')
     pub_map  = rospy.Publisher("/inflated_map", OccupancyGrid, queue_size=10)
@@ -139,4 +122,3 @@ if __name__ == '__main__':
         main()
     except rospy.ROSInterruptException:
         pass
-    
