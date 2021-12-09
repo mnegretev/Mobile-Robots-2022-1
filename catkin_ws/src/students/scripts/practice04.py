@@ -181,8 +181,8 @@ def callback_desplazamiento (msg):
                 respuesta("Moving to B")
         
     elif msg == "GO TO C":
-        coordenadas.pose.position.x = (5.5)
-        coordenadas.pose.position.y = (1.89)
+        coordenadas.pose.position.x = (0)
+        coordenadas.pose.position.y = (0)
         pub_coordenadas.publish(coordenadas)
         if (robot_x == 7.0 and robot_y == 1.0):
                 respuesta("Moving to C")
