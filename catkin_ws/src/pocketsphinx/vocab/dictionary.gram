@@ -5,8 +5,8 @@
 *JSGF Grammar similar to ROS example
 */
 
-grammar voice_cmd;
+grammar dictionary;
 
-public <move>= ROBOTINA COME TO <direction>;
+public <move>= ROBOT COME TO <direction>;
 
 <direction>=BATHROOM|KITCHEN|BEDROOM|STOP;
