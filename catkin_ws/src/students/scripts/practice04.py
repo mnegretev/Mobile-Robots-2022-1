@@ -18,6 +18,7 @@ from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 from std_msgs.msg import String
 
+
 NAME = "Practica4"
 
 pub_cmd_vel = None
@@ -170,6 +171,7 @@ def main():
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     rospy.Subscriber('/recognized', String, callback_recognized)
+    pub_cmd_cord = rospy.Publisher('/', Twist, queue_size=10)
     pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
     listener = tf.TransformListener()
     loop = rospy.Rate(10)
