@@ -5,4 +5,5 @@
 <node name="practice03" pkg="students" type="practice03.py"/>
 <node name="practice04" pkg="students" type="practice04.py"/>
 <include file= "$(find surge_et_ambula)/launch/speech_recognition.launch"/>
+<node name="SoundPlay" pkg="sound_play" type="soundplay_node.py"/>
 </launch>

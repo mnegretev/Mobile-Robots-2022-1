@@ -170,21 +170,21 @@ def callback_desplazamiento (msg):
         coordenadas.pose.position.y = (5)
         pub_coordenadas.publish(coordenadas)
         if (coordenadas.pose.position.x == 5.0 and coordenadas.pose.position.y == 5.0):
-                respuesta("ya llegue a A")
+                respuesta("Moving to A")
                 
     elif msg == "GO TO B":
         coordenadas.pose.position.x = (3)
         coordenadas.pose.position.y = (0)
         pub_coordenadas.publish(coordenadas)
         if (coordenadas.pose.position.x == 3.0 and coordenadas.pose.position.y == 0.0):
-                respuesta("ya llegue a B")
+                respuesta("Moving to B")
         
     elif msg == "GO TO C":
         coordenadas.pose.position.x = (7)
         coordenadas.pose.position.y = (1)
         pub_coordenadas.publish(coordenadas)
         if (coordenadas.pose.position.x == 7.0 and coordenadas.pose.position.y == 1.0):
-                respuesta("ya llegue a C")
+                respuesta("Moving to C")
         
 def callback_recognized (msg):
 	dato = msg.data
@@ -202,7 +202,7 @@ def respuesta(msg):
     
 def main():
     global pub_cmd_vel, loop, listener, pub_coordenadas, pub_respuesta
-    print "PRACTICE 04 - " + NAME
+    print "Proyecto Final - "
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     rospy.Subscriber('/recognized', String, callback_recognized)
