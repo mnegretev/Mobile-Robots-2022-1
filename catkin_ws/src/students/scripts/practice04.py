@@ -52,7 +52,7 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     alpha = 0.5
     beta = 0.5
     v_max = 0.3
-    w_max = 0.5*math.pi
+    w_max = 0.5
 
     #
     # A continuacion determinamos el error de angulo y determinamos que
