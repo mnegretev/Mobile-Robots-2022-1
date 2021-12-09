@@ -27,38 +27,38 @@ def mover_robot(orden):
     if not candado:
         if(orden=="JUSTINA MOVE ANNEXED"):
             hablar("MOVING TO THE ANNEXED")
-            #ANEXO (0,0)
-            coord_pos.pose.position.x=(0) 
-            coord_pos.pose.position.y=(0)
+            #ANEXO (0,0) NUEVO MAPA ANEXO (3.3,0.78)
+            coord_pos.pose.position.x=(3.3) 
+            coord_pos.pose.position.y=(0.78)
             publishing_coord.publish(coord_pos)
             coord_pos=PoseStamped()
             print(coord_pos.pose.position.x)
             print(coord_pos.pose.position.y)
-            if (coord_pos.pose.position.x==0.0 and coord_pos.pose.position.y==0.0): 
+            if (coord_pos.pose.position.x==3.3 and coord_pos.pose.position.y==0.78): 
                 hablar("JUSTINA IS MOVING TO THE ANNEXED")
     
         elif(orden=="JUSTINA MOVE PRINCIPAL"):
             hablar("MOVING TO THE PRINCIPAL")
-            #PRINCIPAL (5.0,4.0)
-            coord_pos.pose.position.x=(4.0) 
-            coord_pos.pose.position.y=(4.0)
+            #PRINCIPAL (5.0,4.0) NUEVO MAPA #(8.33,0.64)
+            coord_pos.pose.position.x=(8.33) 
+            coord_pos.pose.position.y=(0.64)
             publishing_coord.publish(coord_pos)
             coord_pos=PoseStamped()
             print(coord_pos.pose.position.x)
             print(coord_pos.pose.position.y)
-            if (coord_pos.pose.position.x==4.0 and coord_pos.pose.position.y==4.0): 
+            if (coord_pos.pose.position.x==8.33 and coord_pos.pose.position.y==0.64): 
                 hablar("JUSTINA IS MOVING TO THE PRINCIPAL")
 
         elif(orden=="JUSTINA MOVE INSTITUTE"):
             hablar("MOVING TO THE INSTITUTE")
-            #INSTITUTE (8,0)
-            coord_pos.pose.position.x=(9) 
-            coord_pos.pose.position.y=(5)
+            #INSTITUTE (8,0) NUEVO MAPA (,)
+            coord_pos.pose.position.x=(5.5) 
+            coord_pos.pose.position.y=(1.89)
             publishing_coord.publish(coord_pos)
             coord_pos=PoseStamped()
             print(coord_pos.pose.position.x)
             print(coord_pos.pose.position.y)
-            if (coord_pos.pose.position.x==9.0 and coord_pos.pose.position.y==5.0): 
+            if (coord_pos.pose.position.x==5.5 and coord_pos.pose.position.y==1.89): 
                 hablar("JUSTINA IS MOVING TO THE INSTITUTE")       
     else: 
         print("En movimiento")
