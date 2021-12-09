@@ -17,6 +17,7 @@ from nav_msgs.srv import GetPlan, GetPlanRequest
 from custom_msgs.srv import SmoothPath, SmoothPathRequest
 from geometry_msgs.msg import Twist, PoseStamped, Pose, Point
 from std_msgs.msg import String
+from sound_play.msg import SoundRequest
 
 
 NAME = "Practica4"
@@ -159,11 +160,22 @@ def get_robot_pose(listener):
     except:
         pass
     return [0,0,0]
+
 def callback_recognized (msg):
+    coordenadas = PoseStamped()
     if msg == "GO TO A":
-        print "voy a A"
-        goal_x=5
-        goal_y=5
+        coordenadas.pose.position.x = (5)
+        coordenadas.pose.position.y = (5)
+        pub_coordenadas.publish(coord_pos)
+    if msg == "GO TO B":
+        coordenadas.pose.position.x = (3)
+        coordenadas.pose.position.y = (0)
+        pub_coordenadas.publish(coord_pos)
+    if msg == "GO TO C":
+        coordenadas.pose.position.x = (7)
+        coordenadas.pose.position.y = (1)
+        pub_coordenadas.publish(coord_pos)
+    
 
 def main():
     global pub_cmd_vel, loop, listener
@@ -171,7 +183,7 @@ def main():
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     rospy.Subscriber('/recognized', String, callback_recognized)
-    pub_cmd_cord = rospy.Publisher('/', Twist, queue_size=10)
+    pub_coordenadas = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
     pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
     listener = tf.TransformListener()
     loop = rospy.Rate(10)
