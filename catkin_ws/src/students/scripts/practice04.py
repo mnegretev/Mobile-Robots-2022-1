@@ -22,6 +22,7 @@ from sound_play.msg import SoundRequest
 
 NAME = "Practica4"
 
+pub_coordenadas = None
 pub_cmd_vel = None
 loop        = None
 listener    = None
@@ -161,29 +162,33 @@ def get_robot_pose(listener):
         pass
     return [0,0,0]
 
-def callback_recognized (msg):
+
+def callback_desplazamiento (msg):
     coordenadas = PoseStamped()
     if msg == "GO TO A":
         coordenadas.pose.position.x = (5)
         coordenadas.pose.position.y = (5)
-        pub_coordenadas.publish(coord_pos)
+        pub_coordenadas.publish(coordenadas)
         if (coordenadas.pose.position.x == 5.0 and coordenadas.pose.position.y == 5.0):
                 respuesta("ya llegue a A")
                 
     elif msg == "GO TO B":
         coordenadas.pose.position.x = (3)
         coordenadas.pose.position.y = (0)
-        pub_coordenadas.publish(coord_pos)
+        pub_coordenadas.publish(coordenadas)
         if (coordenadas.pose.position.x == 3.0 and coordenadas.pose.position.y == 0.0):
                 respuesta("ya llegue a B")
         
     elif msg == "GO TO C":
         coordenadas.pose.position.x = (7)
         coordenadas.pose.position.y = (1)
-        pub_coordenadas.publish(coord_pos)
+        pub_coordenadas.publish(coordenadas)
         if (coordenadas.pose.position.x == 7.0 and coordenadas.pose.position.y == 1.0):
                 respuesta("ya llegue a C")
         
+def callback_recognized (msg):
+	dato = msg.data
+	callback_desplazamiento(dato)
     
 def respuesta(msg):
     voice = SoundRequest()
@@ -195,7 +200,7 @@ def respuesta(msg):
     pub_respuesta.publish(voice)
     
 def main():
-    global pub_cmd_vel, loop, listener
+    global pub_cmd_vel, loop, listener, pub_coordenadas, pub_respuesta
     print "PRACTICE 04 - " + NAME
     rospy.init_node("practice04")
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
