@@ -12,7 +12,7 @@
   <node name="practice02" pkg="students" type="practice02.py"/>
   <node name="practice03" pkg="students" type="practice03.py"/>
   <node name="practice04" pkg="students" type="practice04.py"/>
-  <node name="proyectof"   pkg="students" type="proyectof.py"/>
+  <node name="proyectof"   pkg="students" type="proyectof.py" output="screen"/>
   <include file="$(find surge_et_ambula)/launch/speech_recognition.launch"/>
   <include file="$(find surge_et_ambula)/launch/justina_controllers.launch"/>
 

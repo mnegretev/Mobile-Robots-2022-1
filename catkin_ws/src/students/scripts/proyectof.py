@@ -31,10 +31,11 @@ def mover_robot(orden):
             coord_pos.pose.position.x=(0) 
             coord_pos.pose.position.y=(0)
             publishing_coord.publish(coord_pos)
-            if meta:
-                hablar("Arrived to the ANNEXED")
-            else:
-                hablar("JUSTINA is moving to the ANNEXED")
+            coord_pos=PoseStamped()
+            print(coord_pos.pose.position.x)
+            print(coord_pos.pose.position.y)
+            if (coord_pos.pose.position.x==0.0 and coord_pos.pose.position.y==0.0): 
+                hablar("JUSTINA IS MOVING TO THE ANNEXED")
     
         elif(orden=="JUSTINA MOVE PRINCIPAL"):
             hablar("MOVING TO THE PRINCIPAL")
@@ -42,10 +43,11 @@ def mover_robot(orden):
             coord_pos.pose.position.x=(4.0) 
             coord_pos.pose.position.y=(4.0)
             publishing_coord.publish(coord_pos)
-            if meta:
-                hablar("Arrived to the PRINCIPAL")
-            else:
-                hablar("JUSTINA is moving to the PRINCIPAL")
+            coord_pos=PoseStamped()
+            print(coord_pos.pose.position.x)
+            print(coord_pos.pose.position.y)
+            if (coord_pos.pose.position.x==4.0 and coord_pos.pose.position.y==4.0): 
+                hablar("JUSTINA IS MOVING TO THE PRINCIPAL")
 
         elif(orden=="JUSTINA MOVE INSTITUTE"):
             hablar("MOVING TO THE INSTITUTE")
@@ -53,10 +55,11 @@ def mover_robot(orden):
             coord_pos.pose.position.x=(9) 
             coord_pos.pose.position.y=(5)
             publishing_coord.publish(coord_pos)
-            if meta:
-                hablar("Arrived to the INSTITUTE")
-            else:
-                hablar("JUSTINA is moving to the INSTITUTE")        
+            coord_pos=PoseStamped()
+            print(coord_pos.pose.position.x)
+            print(coord_pos.pose.position.y)
+            if (coord_pos.pose.position.x==9.0 and coord_pos.pose.position.y==5.0): 
+                hablar("JUSTINA IS MOVING TO THE INSTITUTE")       
     else: 
         print("En movimiento")
 
@@ -86,7 +89,6 @@ def verificar_mov(msg):
     elif (msg.linear.x==0):
         candado=False
         meta=True
-
 
 def main():
     global loop,publishing_coord,publicador_habla,candado
