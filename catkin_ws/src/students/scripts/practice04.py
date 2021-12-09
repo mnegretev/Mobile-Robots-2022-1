@@ -52,7 +52,7 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
     alpha = 0.5
     beta = 0.5
     v_max = 0.3
-    w_max = 0.5*math.pi
+    w_max = 0.5
 
     #
     # A continuacion determinamos el error de angulo y determinamos que
@@ -165,25 +165,26 @@ def get_robot_pose(listener):
 
 def callback_desplazamiento (msg):
     coordenadas = PoseStamped()
+    [robot_x, robot_y, robot_a] = get_robot_pose(listener)
     if msg == "GO TO A":
-        coordenadas.pose.position.x = (5)
-        coordenadas.pose.position.y = (5)
+        coordenadas.pose.position.x = (3.3)
+        coordenadas.pose.position.y = (0.78)
         pub_coordenadas.publish(coordenadas)
-        if (coordenadas.pose.position.x == 5.0 and coordenadas.pose.position.y == 5.0):
+        if (robot_x == 5.0 and robot_y == 5.0):
                 respuesta("Moving to A")
                 
     elif msg == "GO TO B":
-        coordenadas.pose.position.x = (3)
-        coordenadas.pose.position.y = (0)
+        coordenadas.pose.position.x = (8.33)
+        coordenadas.pose.position.y = (0.64)
         pub_coordenadas.publish(coordenadas)
-        if (coordenadas.pose.position.x == 3.0 and coordenadas.pose.position.y == 0.0):
+        if (robot_x == 3.0 and robot_y == 0.0):
                 respuesta("Moving to B")
         
     elif msg == "GO TO C":
-        coordenadas.pose.position.x = (7)
-        coordenadas.pose.position.y = (1)
+        coordenadas.pose.position.x = (5.5)
+        coordenadas.pose.position.y = (1.89)
         pub_coordenadas.publish(coordenadas)
-        if (coordenadas.pose.position.x == 7.0 and coordenadas.pose.position.y == 1.0):
+        if (robot_x == 7.0 and robot_y == 1.0):
                 respuesta("Moving to C")
         
 def callback_recognized (msg):
