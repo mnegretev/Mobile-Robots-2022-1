@@ -77,7 +77,7 @@ class NeuralNetwork(object):
         #     nabla_b[-l] = delta
         #     nabla_w[-l] = delta*ylpT  where ylpT is the transpose of outputs vector of layer l-1
         #        
-	delta = (y[-1]-yt)*y[-1]
+	delta = (y[-1]-yt)*y[-1]*(1-y[-1])
 	layer = delta*y[-2].transpose
         nabla_b[-1] = delta
         nabla_w[-1] = delta*y[-2].transpose

@@ -1,0 +1,10 @@
+<launch>
+
+  <node name="practice01" pkg="students" type="practice01.py"/>
+  <node name="practice02" pkg="students" type="practice02.py"/>
+  <node name="practice03" pkg="students" type="practice03.py"/>
+  <node name="practice04" pkg="students" type="practice04.py"/>
+  <include file = "$(find surge_et_ambula)/launch/speech_recognition.launch"/>
+
+</launch>
+
