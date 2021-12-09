@@ -20,24 +20,24 @@ def move_robot(speech_coord):
         
         if(speech_coord == "ROBOT MOVE TO DOOR"):
             print("ROBOT'S MOVING TO DOOR")
-            localization.pose.position.x = 0
-            localization.pose.position.y = 0
+            localization.pose.position.x = 3.3
+            localization.pose.position.y = 0.78
             localization.pose.orientation.w = 1
             zone=1
             pub_local_robot.publish(localization)
 
         elif(speech_coord == "ROBOT MOVE TO LIVINGROOM"):
             print("ROBOT'S MOVING TO LIVINGROOM")
-            localization.pose.position.x = 0.0
-            localization.pose.position.y = 0.0
+            localization.pose.position.x = 8.33
+            localization.pose.position.y = 0.64
             localization.pose.orientation.w = 1
             zone=2
             pub_local_robot.publish(localization)
 
         elif(speech_coord == "ROBOT MOVE TO BEDROOM"):
             print("ROBOT'S MOVING TO BEDROOM")
-            localization.pose.position.x = 0.0
-            localization.pose.position.y = 0.5
+            localization.pose.position.x = 5.5
+            localization.pose.position.y = 1.89
             localization.pose.orientation.w = 1
             zone=3
             pub_local_robot.publish(localization)
