@@ -19,23 +19,23 @@ def move_robot(instruction):
 
 	if not moving:
 		if (instruction == "GO TO BOOKSELLER"):
-			coords.pose.position.x = 7.0000
-			coords.pose.position.y = -1.0000
+			coords.pose.position.x = 5.5000
+			coords.pose.position.y = 1.8900
 			robopub.publish(coords)
 			robotalk("Moving to " + instruction )
 		elif(instruction == "GO TO SAFETY CONE"):
-			coords.pose.position.x = 8.5000
+			coords.pose.position.x = 0.0000
 			coords.pose.position.y = 0.0000
 			robopub.publish(coords)
 			robotalk("Moving to " + instruction)
 		elif(instruction == "GO TO TABLE"):
-			coords.pose.position.x = 8.8000
-			coords.pose.position.y = 8.4500
+			coords.pose.position.x = 3.0000
+			coords.pose.position.y = 3.0000
 			robopub.publish(coords)
 			robotalk("Moving to " + instruction)
 		elif(instruction == "GO TO COUCH"):
-			coords.pose.position.x = 9.0000
-			coords.pose.position.y = 6.4000
+			coords.pose.position.x = 8.3300
+			coords.pose.position.y = 0.6400
 			robopub.publish(coords)
 			robotalk("Moving to " + instruction)
 		elif(instruction == "GO TO DESK"):
