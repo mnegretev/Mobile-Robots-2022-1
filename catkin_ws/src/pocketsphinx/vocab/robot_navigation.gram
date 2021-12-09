@@ -6,6 +6,6 @@
 
 grammar robot_navigation;
 
-public <move> = STOP | GO TO <position>;
+public <move> = GO TO <position>;
 
 <position> = A | B | C;
