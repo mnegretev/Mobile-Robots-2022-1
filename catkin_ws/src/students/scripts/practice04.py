@@ -196,6 +196,7 @@ def respuesta(msg):
     voice.volume = 1
     voice.command = 1
     voice.arg = msg
+    voice.arg2 = 'voice_kal_diphone'
 
     pub_respuesta.publish(voice)
     
