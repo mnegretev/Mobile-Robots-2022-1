@@ -9,4 +9,4 @@ grammar voice_cmd;
 
 public <move>= ROBOT GO TO <direction>;
 
-<direction>=EXIT|CYDONIA|CONSTANTINOPLA;
+<direction>=EXIT|CYDONIA|CONSTANTINOPLE;

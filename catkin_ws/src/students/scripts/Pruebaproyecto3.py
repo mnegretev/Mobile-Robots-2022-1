@@ -7,19 +7,19 @@ Destino=None
      
 def asigdestino(Destino):
     Puntometa= PoseStamped()
-    if(Destino == "ROBOT GO TO KITCHEN"):
+    if(Destino == "ROBOT GO TO CONSTANTINOPLE"):
         Puntometa.pose.position.x=5.0
         Puntometa.pose.position.y=5.0
         Puntometa.pose.position.z=0.0
         Puntometa.pose.orientation.w=1.0
         goal_pub.publish(Puntometa)
-    elif(Destino == "ROBOT GO TO BEDROOM"):
+    elif(Destino == "ROBOT GO TO CYDONIA"):
         Puntometa.pose.position.x=7.0
-        Puntometa.pose.position.y=9.0
+        Puntometa.pose.position.y=2.0
         Puntometa.pose.position.z=0.0
         Puntometa.pose.orientation.w=1.0
         goal_pub.publish(Puntometa)
-    elif(Destino == "ROBOT GO TO BATHROOM"):
+    elif(Destino == "ROBOT GO TO EXIT"):
         Puntometa.pose.position.x=0.0
         Puntometa.pose.position.y=0.0
         Puntometa.pose.position.z=0.0
