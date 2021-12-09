@@ -38,11 +38,11 @@ def move_robot(instruction):
 			coords.pose.position.y = 0.6400
 			robopub.publish(coords)
 			robotalk("Moving to " + instruction)
-		elif(instruction == "GO TO DESK"):
-			coords.pose.position.x = 3.2000
-			coords.pose.position.y = 6.2000
-			robopub.publish(coords)
-			robotalk("Moving to " + instruction)
+		#elif(instruction == "GO TO DESK"):
+		#	coords.pose.position.x = 3.2000
+		#	coords.pose.position.y = 6.2000
+		#	robopub.publish(coords)
+		#	robotalk("Moving to " + instruction)
 
 
 def robotalk(talk):
