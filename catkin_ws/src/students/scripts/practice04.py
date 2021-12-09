@@ -167,16 +167,33 @@ def callback_recognized (msg):
         coordenadas.pose.position.x = (5)
         coordenadas.pose.position.y = (5)
         pub_coordenadas.publish(coord_pos)
-    if msg == "GO TO B":
+        if (coordenadas.pose.position.x == 5.0 and coordenadas.pose.position.y == 5.0):
+                respuesta("ya llegue a A")
+                
+    elif msg == "GO TO B":
         coordenadas.pose.position.x = (3)
         coordenadas.pose.position.y = (0)
         pub_coordenadas.publish(coord_pos)
-    if msg == "GO TO C":
+        if (coordenadas.pose.position.x == 3.0 and coordenadas.pose.position.y == 0.0):
+                respuesta("ya llegue a B")
+        
+    elif msg == "GO TO C":
         coordenadas.pose.position.x = (7)
         coordenadas.pose.position.y = (1)
         pub_coordenadas.publish(coord_pos)
+        if (coordenadas.pose.position.x == 7.0 and coordenadas.pose.position.y == 1.0):
+                respuesta("ya llegue a C")
+        
     
+def respuesta(msg):
+    voice = SoundRequest()
+    voice.sound = -3
+    voice.volume = 1
+    voice.command = 1
+    voice.arg = msg
 
+    pub_respuesta.publish(voice)
+    
 def main():
     global pub_cmd_vel, loop, listener
     print "PRACTICE 04 - " + NAME
@@ -184,6 +201,7 @@ def main():
     rospy.Subscriber('/move_base_simple/goal', PoseStamped, callback_global_goal)
     rospy.Subscriber('/recognized', String, callback_recognized)
     pub_coordenadas = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
+    pub_respuesta = rospy.Publisher('/robotsound', SoundRequest, queue_size=10)
     pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
     listener = tf.TransformListener()
     loop = rospy.Rate(10)
