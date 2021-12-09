@@ -13,8 +13,8 @@
 
   <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find config_files)/maps/appartment.yaml"/>
   <node name="amcl" pkg="amcl" type="amcl" output="screen">
-    <param name="initial_pose_x" value="3.25"/>
-    <param name="initial_pose_y" value="6.30"/>
-    <param name="initial_pose_a" value="-1.57"/>
+    <param name="initial_pose_x" value="5.00"/>
+    <param name="initial_pose_y" value="5.00"/>
+    <param name="initial_pose_a" value="0.00"/>
   </node>
 </launch>
