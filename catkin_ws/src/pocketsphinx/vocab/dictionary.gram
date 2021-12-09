@@ -5,6 +5,7 @@
 *JSGF Grammar similar to ROS example
 */
 
+
 grammar dictionary;
 
 public <move>= ROBOT COME TO <direction>;
