@@ -30,7 +30,7 @@ def move_robot(instruction):
 			robotalk("Moving to " + instruction)
 		elif(instruction == "GO TO TABLE"):
 			coords.pose.position.x = 3.0000
-			coords.pose.position.y = 3.0000
+			coords.pose.position.y = 0.78
 			robopub.publish(coords)
 			robotalk("Moving to " + instruction)
 		elif(instruction == "GO TO COUCH"):

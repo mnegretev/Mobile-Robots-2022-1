@@ -1,0 +1,19 @@
+<launch> 
+	<include file = "$(find surge_et_ambula)/launch/speech_recognition.launch"/> 
+
+	<node name="practice01" pkg="students" type="practice01.py" output="screen"/>
+	<node name="practice02" pkg="students" type="practice02.py" output="screen"/>
+	<node name="practice03" pkg="students" type="practice03.py" output="screen"/>
+	<node name="practice04" pkg="students" type="practice04.py" output="screen"/>
+	<node name="proyectofinal" pkg="students" type="proyectofinal.py" output="screen"/>
+	<node name="sonido" pkg="sound_play" type="soundplay_node.py" output="screen"/>
+
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find config_files)/rviz/path_planning.rviz"/>
+  
+  <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen">
+    <param name="la_predefined" value="$(find config_files)/manipulation/la_predefined.yaml"/>
+    <param name="ra_predefined" value="$(find config_files)/manipulation/ra_predefined.yaml"/>
+    <param name="hd_predefined" value="$(find config_files)/manipulation/hd_predefined.yaml"/>
+  </node>
+</launch>
+
