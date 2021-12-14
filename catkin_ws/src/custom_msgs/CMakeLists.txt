@@ -63,7 +63,6 @@ add_message_files(
 add_service_files(
   FILES
   InverseKinematicsForPose.srv
-  DirectKinematics.srv
   SmoothPath.srv
 )
 

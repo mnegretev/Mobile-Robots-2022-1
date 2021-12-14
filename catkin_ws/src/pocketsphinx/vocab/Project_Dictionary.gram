@@ -1,0 +1,12 @@
+#JSGF v1.0;
+
+
+/**
+*JSGF Grammar similar to kws example
+*/
+
+grammar voice_cmd;
+
+public <move>= ROBOT COME TO <direction>;
+
+<direction>=EXIT|KITCHEN|BEDROOM;

@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 #
 # AUTONOMOUS MOBILE ROBOTS - UNAM, FI, 2022-1
@@ -18,8 +19,8 @@ from nav_msgs.msg import Path
 from nav_msgs.srv import *
 from collections import deque
 
-NAME = "ARREDONDO_ZARATE_ROMAN"
-
+NAME = "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#la practice le fusile#
 msg_path = Path()
 
 def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
@@ -31,13 +32,13 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
     # indicating the indices (cell coordinates) of the path cells.
     # If path cannot be found, return an empty tuple []
     #
-    open_list = []
-    in_closed_l = numpy.full( grid_map.shape,  False)
-    in_open_l = numpy.full( grid_map.shape, False) 
-    g_values = numpy.full( grid_map.shape, float("inf"))
-    f_values = numpy.full( grid_map.shape, float("inf"))
-    previous = numpy.full((grid_map.shape[0], grid_map.shape[0], 2), -1)
-    adjacents = [[1,0],[0,1],[-1,0],[0,-1], [1,1], [-1,1], [-1,-1],[1,-1]]
+    open_list   = []
+    in_closed_l = numpy.full( grid_map.shape, False)
+    in_open_l  = numpy.full( grid_map.shape, False)
+    g_values   = numpy.full( grid_map.shape, float("inf"))
+    f_values   = numpy.full( grid_map.shape, float("inf"))
+    previous   = numpy.full((grid_map.shape[0], grid_map.shape[0], 2), -1)
+    adjacents  = [[1,0],[0,1],[-1,0],[0,-1], [1,1], [-1,1], [-1,-1],[1,-1]]
     heapq.heappush(open_list, (0, [start_r, start_c]))
     in_open_l[start_r, start_c] = True
     g_values[start_r, start_c] = 0
@@ -46,6 +47,7 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
 
     while len(open_list) > 0 and [row, col] != [goal_r, goal_c]:
         [row, col] = heapq.heappop(open_list)[1]
+        print("1")
         in_closed_l[row,col] = True
         adjacents_nodes = [[row+i, col+j] for [i,j] in adjacents]
         for [r,c] in adjacents_nodes:
@@ -57,21 +59,19 @@ def a_star(start_r, start_c, goal_r, goal_c, grid_map, cost_map):
             if g < g_values[r,c]:
                 g_values[r,c] = g
                 f_values[r,c] = f
-                previous[r,c] = [row,col]   
+                previous[r,c] = [row,col]
             if not in_open_l[r,c]:
                 heapq.heappush(open_list, (f_values[r,c], [r,c]))
                 in_open_l[r,c] = True
-    
+
+                
     if [row,col] != [goal_r, goal_c]:
-         print("Cannot calculate path. :'(")
-         return []
+        print("Cannot calculate path. :'(")
+        return []
     print("Path calculated succesfully :D ")
     path = []
-    while [previous[row,col][0],previous[row,col][1]] != [-1,-1]:
-        path.insert(0,[row, col])
-        [row,col] = previous[row,col]
     return path
-    
+
 
 def get_maps():
     print("Getting inflated and cost maps...")
@@ -120,8 +120,8 @@ def main():
     while not rospy.is_shutdown():
         pub_path.publish(msg_path)
         loop.sleep()
-_name_ ="_main_"
-if _name_ == "_main_":
+
+if __name__ == '__main__':
     try:
         main()
     except rospy.ROSInterruptException:
