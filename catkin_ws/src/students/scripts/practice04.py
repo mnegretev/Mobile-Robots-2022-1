@@ -43,8 +43,8 @@ def calculate_control(robot_x, robot_y, robot_a, goal_x, goal_y):
 
     alpha = 1.0#0.2
     betha = 0.1#0.5
-    v_max = 0.8
-    w_max = 1.0
+    v_max = 0.5
+    w_max = 0.5
     [error_x, error_y] = [goal_x - robot_x, goal_y - robot_y]
     error_a = (math.atan2(error_y, error_x) - robot_a)%(2*math.pi)
     error_d = math.sqrt(error_x**2 + error_y**2)

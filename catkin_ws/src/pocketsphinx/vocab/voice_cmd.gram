@@ -6,6 +6,6 @@
 
 grammar voice_cmd;
 
-public <move2> = ROBOT STOP | ROBOT NAVIGATE TO <location>;
+public <move> = ROBOT STOP | ROBOT NAVIGATE TO <location>;
 
-<location> = KITCHEN | PIZZA | LIVINGROOM | DOOR;
+<location> = KITCHEN | DOOR | LIVINGROOM;

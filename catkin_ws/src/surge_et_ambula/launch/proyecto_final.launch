@@ -4,7 +4,8 @@
   <node name="practice02" pkg="students" type="practice02.py"/>
   <node name="practice03" pkg="students" type="practice03.py"/>
   <node name="practice04" pkg="students" type="practice04.py"/>
-  <include file = "$(find surge_et_ambula)/launch/speech_recognition.launch"/>
+  <node name="proyecto_final" pkg="students" type="proyecto_final.py"/>
 
+  <include file="$(find surge_et_ambula)/launch/speech_recognition.launch"/>
+  <include file="$(find surge_et_ambula)/launch/path_planning.launch"/>
 </launch>
-
