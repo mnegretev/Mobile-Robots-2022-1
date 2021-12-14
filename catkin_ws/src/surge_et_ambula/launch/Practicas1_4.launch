@@ -30,7 +30,7 @@
 
     <include file="$(find surge_et_ambula)/launch/Project_Dictionary.launch"/>
 
-    <node name="practice04BETA" pkg="students" type="practice04BETA.py"/>
+    <node name="Practice04BETA" pkg="students" type="Practice04BETA.py"/>
 
 
 
