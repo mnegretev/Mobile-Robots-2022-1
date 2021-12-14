@@ -1,0 +1,2 @@
+La práctica no funciona correctamente. El programa no corre.
+Calificación: 6
